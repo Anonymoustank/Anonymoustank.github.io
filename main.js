@@ -23,7 +23,7 @@ var image2 = new Image();
 image2.src = "Images/Enemy2.png";
 
 var image3 = new Image();
-image3.src = "Images/Enemy3.png";
+image3.src = "Images/Enemy4.png";
 
 dead = false
 enemy_size = 30
@@ -61,6 +61,31 @@ var enemy_list = original_enemy_list
 var bullet_list = []
 var cooldown = performance.now() - 1000
 
+
+function has_collided(list1, list2, row){
+    let x1 = list1[0]
+    let y1 = list1[1]
+    let width1 = list1[2]
+    let height1 = list1[3]
+
+    let x2 = list2[0]
+    let y2 = list2[1] + (row + 1) * 10
+    let width2 = list2[2]
+    let height2 = list2[3]
+
+    if(x1 < x2 + width2 &&
+        x1 + width1 > x2 &&
+        y1 < y2 + height2 &&
+        y1 + height1 > y2)
+    {
+        return true
+    }
+    else {
+        return false
+    }
+    
+}
+
 function keyDownHandler(e) {
     if(e.key == "Right" || e.key == "ArrowRight" || e.key == "d") {
         rightPressed = true;
@@ -92,6 +117,9 @@ function keyUpHandler(e) {
 
 function draw_items(){
     ctx.beginPath();
+    if (enemy_list[0].length === enemy_list[1].length === enemy_list[2].length === 0){
+        enemy_list = original_enemy_list
+    }
     if (loop_num === 1){
         for (let row in enemy_list){
             for (let enemy in enemy_list[row]){
@@ -102,6 +130,13 @@ function draw_items(){
     }
     for (let row in enemy_list){
         for (let enemy in enemy_list[row]){
+            for (let bullet in bullet_list){
+                if (has_collided(bullet_list[bullet], enemy_list[row][enemy], row)){
+                    console.log(row)
+                    bullet_list.splice(bullet, 1)
+                    enemy_list[row].splice(enemy, 1)
+                }
+            }
             if (enemy_list[row][enemy][1] >= canvas.height - enemy_size){
                 dead = true
             }
@@ -126,6 +161,7 @@ function draw_items(){
             enemy_list[row][enemy][0] = enemy_list[row][enemy][0] + enemy_speed
             if (move_down){
                 enemy_list[row][enemy][1] = enemy_list[row][enemy][1] + enemy_size
+                console.log(enemy_list[row][enemy][1], enemy_size)
             }
             ctx.drawImage(myImage, enemy_list[row][enemy][0], enemy_list[row][enemy][1] + (row + 1) * 10, enemy_list[row][enemy][2], enemy_list[row][enemy][3]);
         }
