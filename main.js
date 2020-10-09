@@ -13,9 +13,9 @@ document.addEventListener("keydown", keyDownHandler, false);
 document.addEventListener("keyup", keyUpHandler, false);
 var wave = 1
 var enemy_speed = -2;
-var enemy_y = 10
 var loop_num = 1;
 var move_down = false;
+var score = 0;
 
 var playerImage = new Image();
 playerImage.src = "Images/Player.ico"
@@ -127,6 +127,7 @@ function draw_items(){
     ctx.beginPath();
     ctx.font = "30px Georgia";
     ctx.fillText("Wave: " + wave.toString(), canvas.width * 0.9, canvas.height * 0.95);
+    ctx.fillText("Score: " + score.toString(), canvas.width/2 - 75, canvas.height * 0.95)
     if (enemy_list[0].length == 0 && enemy_list[1].length == 0 && enemy_list[2].length == 0){
         console.log(enemy_list[0].length)
         enemy_list = [
@@ -179,6 +180,7 @@ function draw_items(){
                     bullet_list.splice(bullet, 1)
                     enemy_list[row].splice(enemy, 1)
                     enemy_killed.play()
+                    score = score + 10
                 }
             }
         }
@@ -252,13 +254,27 @@ function draw_items(){
 }
 function draw() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    if(rightPressed && x < canvas.width - player_width) {
-        x += dx;
+    if (dead == false){
+        if(rightPressed && x < canvas.width - player_width) {
+            x += dx;
+        }
+        else if(leftPressed && x > 0) {
+            x -= dx;
+        }
+        draw_items()
     }
-    else if(leftPressed && x > 0) {
-        x -= dx;
+    else {
+        ctx.beginPath();
+        ctx.font = "80px Georgia";
+        ctx.fillText("You Lose", canvas.width/2 - 150, canvas.height * 0.2)
+        ctx.font = "30px Georgia";
+        ctx.fillText("Wave: " + wave.toString(), canvas.width/2 - 75, canvas.height/2);
+        ctx.fillText("Final Score: " + score.toString(), canvas.width/2 - 75, canvas.height/2 - canvas.height/8)
+        ctx.fillStyle = "#eee";
+        ctx.fill();
+        ctx.closePath();
     }
-    draw_items()
+    
     
 }
 var fps = 60
