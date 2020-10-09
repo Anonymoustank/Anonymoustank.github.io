@@ -1,14 +1,14 @@
 var canvas = document.getElementById("myCanvas");
 canvas.width  = window.innerWidth;
 canvas.height = window.innerHeight;
-var x = canvas.width/2;
-var y = window.innerHeight * 0.8;
 var dx = 4;
 var ctx = canvas.getContext("2d");
 var rightPressed = false;
 var leftPressed = false;
 var player_width = 75;
 var player_height = 30;
+var x = canvas.width/2 - player_width/2;
+var y = window.innerHeight * 0.8;
 document.addEventListener("keydown", keyDownHandler, false);
 document.addEventListener("keyup", keyUpHandler, false);
 
@@ -22,31 +22,31 @@ var image3 = new Image();
 image3.src = "Images/Enemy3.png";
 
 dead = false
-
+enemy_size = 30
 var original_enemy_list = [
     [
-        [0, 0, 30, 30],
-        [0, 0, 30, 30],
-        [0, 0, 30, 30],
-        [0, 0, 30, 30],
-        [0, 0, 30, 30],
+        [0, 0, enemy_size, enemy_size],
+        [0, 0, enemy_size, enemy_size],
+        [0, 0, enemy_size, enemy_size],
+        [0, 0, enemy_size, enemy_size],
+        [0, 0, enemy_size, enemy_size],
 
     ],
 
     [
-        [0, 0, 30, 30],
-        [0, 0, 30, 30],
-        [0, 0, 30, 30],
-        [0, 0, 30, 30],
-        [0, 0, 30, 30],
+        [0, 0, enemy_size, enemy_size],
+        [0, 0, enemy_size, enemy_size],
+        [0, 0, enemy_size, enemy_size],
+        [0, 0, enemy_size, enemy_size],
+        [0, 0, enemy_size, enemy_size],
 
     ],
     [
-        [0, 0, 30, 30],
-        [0, 0, 30, 30],
-        [0, 0, 30, 30],
-        [0, 0, 30, 30],
-        [0, 0, 30, 30],
+        [0, 0, enemy_size, enemy_size],
+        [0, 0, enemy_size, enemy_size],
+        [0, 0, enemy_size, enemy_size],
+        [0, 0, enemy_size, enemy_size],
+        [0, 0, enemy_size, enemy_size],
 
     ]
 
@@ -103,7 +103,7 @@ function draw_items(){
             else if (row == 2){
                 var myImage = image3
             }
-            ctx.drawImage(myImage, 10 * (enemy + 1) + (canvas.width/2 - (enemy_list[row].length * 37.5)), 10 * (row + 1), enemy_list[row][enemy][2], enemy_list[row][enemy][3]);
+            ctx.drawImage(myImage, 10 * (enemy + 1) + (canvas.width/2 - (enemy_list[row].length * enemy_size * 1.5)), 10 * (row + 1), enemy_list[row][enemy][2], enemy_list[row][enemy][3]);
         }
     }
     var player = ctx.rect(x, y, player_width, player_height);
