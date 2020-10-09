@@ -12,8 +12,51 @@ var player_height = 30;
 document.addEventListener("keydown", keyDownHandler, false);
 document.addEventListener("keyup", keyUpHandler, false);
 
+var image1 = new Image();
+image1.src = "Images/Enemy1.png";
+
+var image2 = new Image();
+image2.src = "Images/Enemy2.png";
+
+var image3 = new Image();
+image3.src = "Images/Enemy3.png";
+
+dead = false
+
+var original_enemy_list = [
+    [
+        [0, 0, 30, 30],
+        [0, 0, 30, 30],
+        [0, 0, 30, 30],
+        [0, 0, 30, 30],
+        [0, 0, 30, 30],
+
+    ],
+
+    [
+        [0, 0, 30, 30],
+        [0, 0, 30, 30],
+        [0, 0, 30, 30],
+        [0, 0, 30, 30],
+        [0, 0, 30, 30],
+
+    ],
+    [
+        [0, 0, 30, 30],
+        [0, 0, 30, 30],
+        [0, 0, 30, 30],
+        [0, 0, 30, 30],
+        [0, 0, 30, 30],
+
+    ]
+
+]
+
+var enemy_list = original_enemy_list
+console.log(enemy_list)
+
 var bullet_list = []
-var cooldown = performance.now()
+var cooldown = performance.now() - 1000
 
 function keyDownHandler(e) {
     if(e.key == "Right" || e.key == "ArrowRight" || e.key == "d") {
@@ -46,6 +89,23 @@ function keyUpHandler(e) {
 
 function draw_items(){
     ctx.beginPath();
+    for (let row in enemy_list){
+        for (let enemy in enemy_list[row]){
+            if (enemy_list[row][enemy][1] >= canvas.length){
+                dead = true
+            }
+            if (row == 0){
+                var myImage = image1
+            }
+            else if (row == 1){
+                var myImage = image2
+            }
+            else if (row == 2){
+                var myImage = image3
+            }
+            ctx.drawImage(myImage, 10 * (enemy + 1) + (canvas.width/2 - (enemy_list[row].length * 37.5)), 10 * (row + 1), enemy_list[row][enemy][2], enemy_list[row][enemy][3]);
+        }
+    }
     var player = ctx.rect(x, y, player_width, player_height);
     for (let i in bullet_list){
         ctx.fillStyle = "#eee";
@@ -57,7 +117,6 @@ function draw_items(){
             bullet_list.splice(i, 1)
         }
     }
-    console.log(bullet_list.length)
     ctx.fillStyle = "#008000";
     ctx.fill();
     ctx.closePath();
@@ -73,5 +132,5 @@ function draw() {
     draw_items()
     
 }
-var fps = 100
+var fps = 60
 setInterval(draw, 1000/fps);
