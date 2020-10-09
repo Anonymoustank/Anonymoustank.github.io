@@ -132,7 +132,6 @@ function draw_items(){
         for (let enemy in enemy_list[row]){
             for (let bullet in bullet_list){
                 if (has_collided(bullet_list[bullet], enemy_list[row][enemy], row)){
-                    console.log(row)
                     bullet_list.splice(bullet, 1)
                     enemy_list[row].splice(enemy, 1)
                 }
@@ -140,7 +139,7 @@ function draw_items(){
             if (enemy_list[row][enemy][1] >= canvas.height - enemy_size){
                 dead = true
             }
-            if (enemy_list[row][enemy][0] >= canvas.width - enemy_list[row][enemy][2] || enemy_list[row][enemy][0] < 0) {
+            if (enemy_list[row][enemy][0] >= canvas.width - enemy_list[row][enemy][2] || enemy_list[row][enemy][0] <= 0) {
                 enemy_speed = enemy_speed * -1
                 move_down = true
             }
@@ -162,6 +161,12 @@ function draw_items(){
             if (move_down){
                 enemy_list[row][enemy][1] = enemy_list[row][enemy][1] + enemy_size
                 console.log(enemy_list[row][enemy][1], enemy_size)
+                if (enemy_list[row][enemy][0] >= canvas.width - enemy_list[row][enemy][2]){
+                    enemy_list[row][enemy][0] = canvas.width - enemy_list[row][enemy][2] - 1
+                }
+                else if (enemy_list[row][enemy][0] <= 0){
+                    enemy_list[row][enemy][0] = 1
+                }
             }
             ctx.drawImage(myImage, enemy_list[row][enemy][0], enemy_list[row][enemy][1] + (row + 1) * 10, enemy_list[row][enemy][2], enemy_list[row][enemy][3]);
         }
