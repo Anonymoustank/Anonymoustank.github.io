@@ -11,7 +11,7 @@ var x = canvas.width/2 - player_width/2;
 var y = window.innerHeight * 0.8;
 document.addEventListener("keydown", keyDownHandler, false);
 document.addEventListener("keyup", keyUpHandler, false);
-var enemy_speed = 3;
+var enemy_speed = -2;
 var enemy_y = 10
 var loop_num = 1;
 var move_down = false;
@@ -60,6 +60,8 @@ var enemy_list = original_enemy_list
 
 var bullet_list = []
 var cooldown = performance.now() - 1000
+
+var time_since_move_down = performance.now()
 
 
 function has_collided(list1, list2, row){
@@ -136,12 +138,34 @@ function draw_items(){
                     enemy_list[row].splice(enemy, 1)
                 }
             }
+        }
+    }
+    for (let row in enemy_list){
+        for (let enemy in enemy_list[row]){
             if (enemy_list[row][enemy][1] >= canvas.height - enemy_size){
                 dead = true
             }
-            if (enemy_list[row][enemy][0] >= canvas.width - enemy_list[row][enemy][2] || enemy_list[row][enemy][0] <= 0) {
+            if (enemy_list[row][enemy][0] >= canvas.width - enemy_list[row][enemy][2] || enemy_list[row][enemy][0] < 0 + enemy_list[row][enemy][2]/2) {
+                if (enemy_list[row][enemy][0] >= canvas.width - enemy_list[row][enemy][2]){
+                    var case1 = true
+                    var case2 = false
+                }
+                else {
+                    var case2 = true
+                    var case1 = false
+                }
                 enemy_speed = enemy_speed * -1
                 move_down = true
+                for (let row1 in enemy_list){
+                    for (let enemy1 in enemy_list[row1]){
+                        if (case1){
+                            enemy_list[row1][enemy1][0] = enemy_list[row1][enemy1][0] - enemy_list[row1][enemy1][2] - 2
+                        }
+                        else if (case2){
+                            enemy_list[row1][enemy1][0] = enemy_list[row1][enemy1][0] + enemy_list[row1][enemy1][2] + 2
+                        }
+                    }
+                }   
             }
             
         }
@@ -157,19 +181,16 @@ function draw_items(){
             else if (row == 2){
                 var myImage = image3
             }
+            console.log(enemy_speed)
             enemy_list[row][enemy][0] = enemy_list[row][enemy][0] + enemy_speed
             if (move_down){
                 enemy_list[row][enemy][1] = enemy_list[row][enemy][1] + enemy_size
-                console.log(enemy_list[row][enemy][1], enemy_size)
-                if (enemy_list[row][enemy][0] >= canvas.width - enemy_list[row][enemy][2]){
-                    enemy_list[row][enemy][0] = canvas.width - enemy_list[row][enemy][2] - 1
-                }
-                else if (enemy_list[row][enemy][0] <= 0){
-                    enemy_list[row][enemy][0] = 1
-                }
             }
             ctx.drawImage(myImage, enemy_list[row][enemy][0], enemy_list[row][enemy][1] + (row + 1) * 10, enemy_list[row][enemy][2], enemy_list[row][enemy][3]);
         }
+    }
+    if (move_down){
+        time_since_move_down = performance.now()
     }
     move_down = false
     var player = ctx.rect(x, y, player_width, player_height);
