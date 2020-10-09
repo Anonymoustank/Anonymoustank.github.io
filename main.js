@@ -17,6 +17,9 @@ var enemy_y = 10
 var loop_num = 1;
 var move_down = false;
 
+var playerImage = new Image();
+playerImage.src = "Images/Player.ico"
+
 var audio = new Audio('Audio/shoot.wav');
 audio.volume = 0.1
 
@@ -232,7 +235,7 @@ function draw_items(){
         time_since_move_down = performance.now()
     }
     move_down = false
-    var player = ctx.rect(x, y, player_width, player_height);
+    var player = ctx.drawImage(playerImage,x, y, player_width, player_height);
     for (let i in bullet_list){
         ctx.fillStyle = "#eee";
         if (bullet_list[i][1] > 0){
