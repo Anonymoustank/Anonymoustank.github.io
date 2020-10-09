@@ -11,6 +11,10 @@ var x = canvas.width/2 - player_width/2;
 var y = window.innerHeight * 0.8;
 document.addEventListener("keydown", keyDownHandler, false);
 document.addEventListener("keyup", keyUpHandler, false);
+var enemy_speed = 3;
+var enemy_y = 10
+var loop_num = 1;
+var move_down = false;
 
 var image1 = new Image();
 image1.src = "Images/Enemy1.png";
@@ -53,7 +57,6 @@ var original_enemy_list = [
 ]
 
 var enemy_list = original_enemy_list
-console.log(enemy_list)
 
 var bullet_list = []
 var cooldown = performance.now() - 1000
@@ -89,11 +92,28 @@ function keyUpHandler(e) {
 
 function draw_items(){
     ctx.beginPath();
+    if (loop_num === 1){
+        for (let row in enemy_list){
+            for (let enemy in enemy_list[row]){
+                enemy_list[row][enemy][0] = 10 * (enemy + 1) + (canvas.width/2 - (enemy_list[row].length * enemy_size * 1.5))
+            }
+        }
+        loop_num = loop_num + 1
+    }
     for (let row in enemy_list){
         for (let enemy in enemy_list[row]){
-            if (enemy_list[row][enemy][1] >= canvas.length){
+            if (enemy_list[row][enemy][1] >= canvas.height - enemy_size){
                 dead = true
             }
+            if (enemy_list[row][enemy][0] >= canvas.width - enemy_list[row][enemy][2] || enemy_list[row][enemy][0] < 0) {
+                enemy_speed = enemy_speed * -1
+                move_down = true
+            }
+            
+        }
+    }
+    for (let row in enemy_list){
+        for (let enemy in enemy_list[row]){
             if (row == 0){
                 var myImage = image1
             }
@@ -103,9 +123,14 @@ function draw_items(){
             else if (row == 2){
                 var myImage = image3
             }
-            ctx.drawImage(myImage, 10 * (enemy + 1) + (canvas.width/2 - (enemy_list[row].length * enemy_size * 1.5)), 10 * (row + 1), enemy_list[row][enemy][2], enemy_list[row][enemy][3]);
+            enemy_list[row][enemy][0] = enemy_list[row][enemy][0] + enemy_speed
+            if (move_down){
+                enemy_list[row][enemy][1] = enemy_list[row][enemy][1] + enemy_size
+            }
+            ctx.drawImage(myImage, enemy_list[row][enemy][0], enemy_list[row][enemy][1] + (row + 1) * 10, enemy_list[row][enemy][2], enemy_list[row][enemy][3]);
         }
     }
+    move_down = false
     var player = ctx.rect(x, y, player_width, player_height);
     for (let i in bullet_list){
         ctx.fillStyle = "#eee";
