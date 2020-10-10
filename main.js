@@ -16,6 +16,7 @@ var enemy_speed = -2;
 var loop_num = 1;
 var move_down = false;
 var score = 0;
+var lives = 2;
 
 var playerImage = new Image();
 playerImage.src = "Images/Player.ico"
@@ -125,41 +126,16 @@ function keyUpHandler(e) {
 
 function draw_items(){
     ctx.beginPath();
+    for (let i = 0; i < lives; i++){
+        ctx.drawImage(playerImage, player_width * i, canvas.height * 0.95, player_width, player_height);
+    }
     ctx.font = "30px Georgia";
     ctx.fillText("Wave: " + wave.toString(), canvas.width * 0.9, canvas.height * 0.95);
     ctx.fillText("Score: " + score.toString(), canvas.width/2 - 75, canvas.height * 0.95)
     if (enemy_list[0].length == 0 && enemy_list[1].length == 0 && enemy_list[2].length == 0){
-        console.log(enemy_list[0].length)
-        enemy_list = [
-            [
-                [0, 0, enemy_size, enemy_size],
-                [0, 0, enemy_size, enemy_size],
-                [0, 0, enemy_size, enemy_size],
-                [0, 0, enemy_size, enemy_size],
-                [0, 0, enemy_size, enemy_size],
-        
-            ],
-        
-            [
-                [0, 0, enemy_size, enemy_size],
-                [0, 0, enemy_size, enemy_size],
-                [0, 0, enemy_size, enemy_size],
-                [0, 0, enemy_size, enemy_size],
-                [0, 0, enemy_size, enemy_size],
-        
-            ],
-            [
-                [0, 0, enemy_size, enemy_size],
-                [0, 0, enemy_size, enemy_size],
-                [0, 0, enemy_size, enemy_size],
-                [0, 0, enemy_size, enemy_size],
-                [0, 0, enemy_size, enemy_size],
-        
-            ]
-        
-        ]
+        enemy_list = [[[0, 0, enemy_size, enemy_size],[0, 0, enemy_size, enemy_size],[0, 0, enemy_size, enemy_size],[0, 0, enemy_size, enemy_size],[0, 0, enemy_size, enemy_size],], [[0, 0, enemy_size, enemy_size],[0, 0, enemy_size, enemy_size],[0, 0, enemy_size, enemy_size],[0, 0, enemy_size, enemy_size],[0, 0, enemy_size, enemy_size],], [[0, 0, enemy_size, enemy_size],[0, 0, enemy_size, enemy_size],[0, 0, enemy_size, enemy_size],[0, 0, enemy_size, enemy_size],[0, 0, enemy_size, enemy_size],]]
         loop_num = 1
-        if (Math.abs(enemy_speed) < 7){
+        if (Math.abs(enemy_speed) < 15){
             enemy_speed = Math.abs(enemy_speed)
             enemy_speed = enemy_speed + 1
         }
@@ -187,7 +163,7 @@ function draw_items(){
     }
     for (let row in enemy_list){
         for (let enemy in enemy_list[row]){
-            if (enemy_list[row][enemy][1] >= canvas.height - enemy_size){
+            if (enemy_list[row][enemy][1] >= y - enemy_size * 7){
                 dead = true
             }
             if (enemy_list[row][enemy][0] >= canvas.width - enemy_list[row][enemy][2] || enemy_list[row][enemy][0] < 0 + enemy_list[row][enemy][2]/2) {
@@ -237,7 +213,7 @@ function draw_items(){
         time_since_move_down = performance.now()
     }
     move_down = false
-    var player = ctx.drawImage(playerImage,x, y, player_width, player_height);
+    var player = ctx.drawImage(playerImage, x, y, player_width, player_height);
     for (let i in bullet_list){
         ctx.fillStyle = "#eee";
         if (bullet_list[i][1] > 0){
@@ -274,8 +250,6 @@ function draw() {
         ctx.fill();
         ctx.closePath();
     }
-    
-    
 }
 var fps = 60
 setInterval(draw, 1000/fps);
