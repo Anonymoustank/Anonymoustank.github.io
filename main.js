@@ -261,8 +261,17 @@ function draw_items(){
     for (let i in enemy_bullet_list){
         ctx.fillStyle = "#FF0000";
         if (enemy_bullet_list[i][1] < canvas.height){
-            ctx.fillRect(enemy_bullet_list[i][0], enemy_bullet_list[i][1], enemy_bullet_list[i][2], enemy_bullet_list[i][3])
-            enemy_bullet_list[i][1] += 5
+            if (has_collided(enemy_bullet_list[i], [x, y, player_width, player_height], -1)){
+                enemy_bullet_list.splice(i, 1)
+                lives -= 1
+                if (lives <= 0){
+                    dead = true
+                }
+            }
+            else {
+                ctx.fillRect(enemy_bullet_list[i][0], enemy_bullet_list[i][1], enemy_bullet_list[i][2], enemy_bullet_list[i][3])
+                enemy_bullet_list[i][1] += 5
+            }
         }
         else{
             enemy_bullet_list.splice(i, 1)
