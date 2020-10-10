@@ -31,6 +31,9 @@ audio.volume = 0.1
 var enemy_killed = new Audio('Audio/invaderkilled.wav');
 enemy_killed.volume = 0.1
 
+var explosion = new Audio('Audio/explosion.wav')
+explosion.volume = 0.1
+
 var image1 = new Image();
 image1.src = "Images/Enemy1.png";
 
@@ -262,8 +265,10 @@ function draw_items(){
         ctx.fillStyle = "#FF0000";
         if (enemy_bullet_list[i][1] < canvas.height){
             if (has_collided(enemy_bullet_list[i], [x, y, player_width, player_height], -1)){
+                explosion.play()
                 enemy_bullet_list.splice(i, 1)
                 lives -= 1
+                x = canvas.width/2 - player_width/2
                 if (lives <= 0){
                     dead = true
                 }
