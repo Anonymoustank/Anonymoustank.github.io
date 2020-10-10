@@ -19,6 +19,8 @@ var score = 0;
 var lives = 2;
 var ufo_present = false
 
+var time_since_ufo = performance.now()
+
 var ufoImage = new Image()
 ufoImage.src = "Images/UFO.png"
 
@@ -139,7 +141,8 @@ function keyUpHandler(e) {
 function draw_items(){
     ctx.beginPath();
     var random_num = randomNumber(1, 500)
-    if (random_num == 3 && ufo_present == false){
+    if (random_num == 3 && ufo_present == false && performance.now() - time_since_ufo >= 7500){
+        time_since_ufo = performance.now()
         ufo_present = true
         ufo_x = 0
     }
