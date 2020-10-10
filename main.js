@@ -146,6 +146,13 @@ function draw_items(){
         if (ufo_x > canvas.width){
             ufo_present = false
         }
+        for (let bullet in bullet_list){
+            if(has_collided(bullet_list[bullet], [ufo_x, canvas.height * 0.01, player_width, player_height], -1)){
+                enemy_killed.play()
+                ufo_present = false
+                score = score + 100
+            }
+        }
     }
     for (let i = 0; i < lives; i++){
         ctx.drawImage(playerImage, player_width * i, canvas.height * 0.95, player_width, player_height);
