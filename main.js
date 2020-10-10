@@ -72,6 +72,7 @@ var enemy_list = [
 ]
 
 var bullet_list = []
+var enemy_bullet_list = []
 var cooldown = performance.now() - 1000
 
 var time_since_move_down = performance.now()
@@ -237,6 +238,9 @@ function draw_items(){
                 enemy_list[row][enemy][1] = enemy_list[row][enemy][1] + enemy_size
             }
             ctx.drawImage(myImage, enemy_list[row][enemy][0], enemy_list[row][enemy][1] + (row + 1) * 10, enemy_list[row][enemy][2], enemy_list[row][enemy][3]);
+            if (randomNumber(1, 850) == 5){
+                enemy_bullet_list.push([enemy_list[row][enemy][0] + enemy_list[row][enemy][2]/2, enemy_list[row][enemy][1] + (row + 1) * 10, 5, 10])
+            }
         }
     }
     if (move_down){
@@ -252,6 +256,16 @@ function draw_items(){
         }
         else{
             bullet_list.splice(i, 1)
+        }
+    }
+    for (let i in enemy_bullet_list){
+        ctx.fillStyle = "#FF0000";
+        if (enemy_bullet_list[i][1] < canvas.height){
+            ctx.fillRect(enemy_bullet_list[i][0], enemy_bullet_list[i][1], enemy_bullet_list[i][2], enemy_bullet_list[i][3])
+            enemy_bullet_list[i][1] += 5
+        }
+        else{
+            enemy_bullet_list.splice(i, 1)
         }
     }
     ctx.fillStyle = "#008000";
