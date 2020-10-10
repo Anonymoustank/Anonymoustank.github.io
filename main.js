@@ -139,7 +139,6 @@ function keyUpHandler(e) {
 function draw_items(){
     ctx.beginPath();
     var random_num = randomNumber(1, 500)
-    console.log(random_num)
     if (random_num == 3 && ufo_present == false){
         ufo_present = true
         ufo_x = 0
@@ -287,26 +286,28 @@ function draw_items(){
     ctx.closePath();
 }
 function draw() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    if (dead == false){
-        if(rightPressed && x < canvas.width - player_width) {
-            x += dx;
+    if (running == false){
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        if (dead == false){
+            if(rightPressed && x < canvas.width - player_width) {
+                x += dx;
+            }
+            else if(leftPressed && x > 0) {
+                x -= dx;
+            }
+            draw_items()
         }
-        else if(leftPressed && x > 0) {
-            x -= dx;
+        else {
+            ctx.beginPath();
+            ctx.font = "80px Georgia";
+            ctx.fillText("You Lose", canvas.width/2 - 150, canvas.height * 0.2)
+            ctx.font = "30px Georgia";
+            ctx.fillText("Wave: " + wave.toString(), canvas.width/2 - 75, canvas.height/2);
+            ctx.fillText("Final Score: " + score.toString(), canvas.width/2 - 75, canvas.height/2 - canvas.height/8)
+            ctx.fillStyle = "#eee";
+            ctx.fill();
+            ctx.closePath();
         }
-        draw_items()
-    }
-    else {
-        ctx.beginPath();
-        ctx.font = "80px Georgia";
-        ctx.fillText("You Lose", canvas.width/2 - 150, canvas.height * 0.2)
-        ctx.font = "30px Georgia";
-        ctx.fillText("Wave: " + wave.toString(), canvas.width/2 - 75, canvas.height/2);
-        ctx.fillText("Final Score: " + score.toString(), canvas.width/2 - 75, canvas.height/2 - canvas.height/8)
-        ctx.fillStyle = "#eee";
-        ctx.fill();
-        ctx.closePath();
     }
 }
 var fps = 60
