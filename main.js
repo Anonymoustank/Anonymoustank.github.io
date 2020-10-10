@@ -17,6 +17,10 @@ var loop_num = 1;
 var move_down = false;
 var score = 0;
 var lives = 2;
+var ufo_present = false
+
+var ufoImage = new Image()
+ufoImage.src = "Images/UFO.png"
 
 var playerImage = new Image();
 playerImage.src = "Images/Player.ico"
@@ -97,6 +101,10 @@ function has_collided(list1, list2, row){
     
 }
 
+function randomNumber(min, max) {  
+    return Math.floor(Math.random() * (max - min) + min); 
+}  
+
 function keyDownHandler(e) {
     if(e.key == "Right" || e.key == "ArrowRight" || e.key == "d") {
         rightPressed = true;
@@ -126,6 +134,19 @@ function keyUpHandler(e) {
 
 function draw_items(){
     ctx.beginPath();
+    var random_num = randomNumber(1, 500)
+    console.log(random_num)
+    if (random_num == 3 && ufo_present == false){
+        ufo_present = true
+        ufo_x = 0
+    }
+    if (ufo_present){
+        ctx.drawImage(ufoImage, ufo_x, canvas.height * 0.01, player_width, player_height)
+        ufo_x = ufo_x + 2
+        if (ufo_x > canvas.width){
+            ufo_present = false
+        }
+    }
     for (let i = 0; i < lives; i++){
         ctx.drawImage(playerImage, player_width * i, canvas.height * 0.95, player_width, player_height);
     }
@@ -133,6 +154,7 @@ function draw_items(){
     ctx.fillText("Wave: " + wave.toString(), canvas.width * 0.9, canvas.height * 0.95);
     ctx.fillText("Score: " + score.toString(), canvas.width/2 - 75, canvas.height * 0.95)
     if (enemy_list[0].length == 0 && enemy_list[1].length == 0 && enemy_list[2].length == 0){
+        ufo_present = false
         enemy_list = [[[0, 0, enemy_size, enemy_size],[0, 0, enemy_size, enemy_size],[0, 0, enemy_size, enemy_size],[0, 0, enemy_size, enemy_size],[0, 0, enemy_size, enemy_size],], [[0, 0, enemy_size, enemy_size],[0, 0, enemy_size, enemy_size],[0, 0, enemy_size, enemy_size],[0, 0, enemy_size, enemy_size],[0, 0, enemy_size, enemy_size],], [[0, 0, enemy_size, enemy_size],[0, 0, enemy_size, enemy_size],[0, 0, enemy_size, enemy_size],[0, 0, enemy_size, enemy_size],[0, 0, enemy_size, enemy_size],]]
         loop_num = 1
         if (Math.abs(enemy_speed) < 15){
@@ -145,6 +167,7 @@ function draw_items(){
         for (let row in enemy_list){
             for (let enemy in enemy_list[row]){
                 enemy_list[row][enemy][0] = 10 * (enemy + 1) + (canvas.width/2 - (enemy_list[row].length * enemy_size * 1.5))
+                enemy_list[row][enemy][1] = enemy_list[row][enemy][1] + enemy_size * 2
             }
         }
         loop_num = loop_num + 1
