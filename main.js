@@ -112,29 +112,33 @@ function randomNumber(min, max) {
 }  
 
 function keyDownHandler(e) {
-    if(e.key == "Right" || e.key == "ArrowRight" || e.key == "d") {
-        rightPressed = true;
-    }
-    else if(e.key == "Left" || e.key == "ArrowLeft" || e.key == "a") {
-        leftPressed = true;
-    }
-    if (e.key == " "){
-        var timeDiff = performance.now() - cooldown;
-        timeDiff /= 1000
-        if (timeDiff >= 1){
-            cooldown = performance.now()
-            bullet_list.push([x + player_width/2, y, 5, 10])
-            audio.play()
+    if (running == false){
+        if(e.key == "Right" || e.key == "ArrowRight" || e.key == "d") {
+            rightPressed = true;
+        }
+        else if(e.key == "Left" || e.key == "ArrowLeft" || e.key == "a") {
+            leftPressed = true;
+        }
+        if (e.key == " "){
+            var timeDiff = performance.now() - cooldown;
+            timeDiff /= 1000
+            if (timeDiff >= 1){
+                cooldown = performance.now()
+                bullet_list.push([x + player_width/2, y, 5, 10])
+                audio.play()
+            }
         }
     }
 }
 
 function keyUpHandler(e) {
-    if(e.key == "Right" || e.key == "ArrowRight" || e.key == "d") {
-        rightPressed = false;
-    }
-    else if(e.key == "Left" || e.key == "ArrowLeft" || e.key == "a") {
-        leftPressed = false;
+    if (running == false){
+        if(e.key == "Right" || e.key == "ArrowRight" || e.key == "d") {
+            rightPressed = false;
+        }
+        else if(e.key == "Left" || e.key == "ArrowLeft" || e.key == "a") {
+            leftPressed = false;
+        }
     }
 }
 
@@ -148,9 +152,10 @@ function draw_items(){
     }
     if (ufo_present){
         ctx.drawImage(ufoImage, ufo_x, canvas.height * 0.01, player_width, player_height)
-        ufo_x = ufo_x + 2
+        ufo_x = ufo_x + 4
         if (ufo_x > canvas.width){
             ufo_present = false
+            time_since_ufo = performance.now()
         }
         for (let bullet in bullet_list){
             if(has_collided(bullet_list[bullet], [ufo_x, canvas.height * 0.01, player_width, player_height], -1)){
@@ -158,6 +163,7 @@ function draw_items(){
                 bullet_list.splice(bullet, 1)
                 ufo_present = false
                 score = score + 100
+                time_since_ufo = performance.now()
             }
         }
     }
@@ -169,6 +175,7 @@ function draw_items(){
     ctx.fillText("Score: " + score.toString(), canvas.width/2 - 75, canvas.height * 0.95)
     if (enemy_list[0].length == 0 && enemy_list[1].length == 0 && enemy_list[2].length == 0){
         ufo_present = false
+        time_since_ufo = performance.now()
         enemy_list = [[[0, 0, enemy_size, enemy_size],[0, 0, enemy_size, enemy_size],[0, 0, enemy_size, enemy_size],[0, 0, enemy_size, enemy_size],[0, 0, enemy_size, enemy_size],], [[0, 0, enemy_size, enemy_size],[0, 0, enemy_size, enemy_size],[0, 0, enemy_size, enemy_size],[0, 0, enemy_size, enemy_size],[0, 0, enemy_size, enemy_size],], [[0, 0, enemy_size, enemy_size],[0, 0, enemy_size, enemy_size],[0, 0, enemy_size, enemy_size],[0, 0, enemy_size, enemy_size],[0, 0, enemy_size, enemy_size],]]
         loop_num = 1
         if (Math.abs(enemy_speed) < 15){
