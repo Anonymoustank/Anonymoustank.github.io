@@ -8,7 +8,7 @@ var leftPressed = false;
 var player_width = 75;
 var player_height = 30;
 var x = canvas.width/2 - player_width/2;
-var y = window.innerHeight * 0.8;
+var y = window.innerHeight * 0.75;
 document.addEventListener("keydown", keyDownHandler, false);
 document.addEventListener("keyup", keyUpHandler, false);
 var wave = 1
@@ -155,6 +155,7 @@ function draw_items(){
         for (let bullet in bullet_list){
             if(has_collided(bullet_list[bullet], [ufo_x, canvas.height * 0.01, player_width, player_height], -1)){
                 enemy_killed.play()
+                bullet_list.splice(bullet, 1)
                 ufo_present = false
                 score = score + 100
             }
@@ -199,7 +200,7 @@ function draw_items(){
     }
     for (let row in enemy_list){
         for (let enemy in enemy_list[row]){
-            if (enemy_list[row][enemy][1] >= y - enemy_size * 7){
+            if (enemy_list[row][enemy][1] + (row + 1) * 10 > y){
                 dead = true
             }
             if (enemy_list[row][enemy][0] >= canvas.width - enemy_list[row][enemy][2] || enemy_list[row][enemy][0] < 0 + enemy_list[row][enemy][2]/2) {
@@ -243,7 +244,7 @@ function draw_items(){
                 enemy_list[row][enemy][1] = enemy_list[row][enemy][1] + enemy_size
             }
             ctx.drawImage(myImage, enemy_list[row][enemy][0], enemy_list[row][enemy][1] + (row + 1) * 10, enemy_list[row][enemy][2], enemy_list[row][enemy][3]);
-            if (randomNumber(1, 850) == 5){
+            if (randomNumber(1, 850) == 5 && enemy_list[row][enemy][1] < 3 * canvas.height/5){
                 enemy_bullet_list.push([enemy_list[row][enemy][0] + enemy_list[row][enemy][2]/2, enemy_list[row][enemy][1] + (row + 1) * 10, 5, 10])
             }
         }
