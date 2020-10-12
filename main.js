@@ -19,6 +19,12 @@ var score = 0;
 var lives = 2;
 var ufo_present = false
 
+var bottom_bar_list = []
+
+for (let i = 0; i < canvas.width/5; i++){
+    bottom_bar_list.push([i * 5, canvas.height * 0.8, 5, 5])
+}
+
 var time_since_ufo = performance.now()
 
 var ufoImage = new Image()
@@ -152,7 +158,7 @@ function draw_items(){
     }
     if (ufo_present){
         ctx.drawImage(ufoImage, ufo_x, canvas.height * 0.01, player_width, player_height)
-        ufo_x = ufo_x + 4
+        ufo_x = ufo_x + 3
         if (ufo_x > canvas.width){
             ufo_present = false
             time_since_ufo = performance.now()
@@ -271,8 +277,18 @@ function draw_items(){
             bullet_list.splice(i, 1)
         }
     }
+    for (let bar in bottom_bar_list){
+        ctx.fillStyle = "#008000";
+        ctx.fillRect(bottom_bar_list[bar][0], bottom_bar_list[bar][1], bottom_bar_list[bar][2], bottom_bar_list[bar][3])
+    }
     for (let i in enemy_bullet_list){
         ctx.fillStyle = "#FF0000";
+        for (let bar in bottom_bar_list){
+            if(has_collided(enemy_bullet_list[i], bottom_bar_list[bar], -1)){
+                bottom_bar_list.splice(bar, 1)
+                enemy_bullet_list.splice(i, 1)
+            }
+        }
         if (enemy_bullet_list[i][1] < canvas.height){
             if (has_collided(enemy_bullet_list[i], [x, y, player_width, player_height], -1)){
                 explosion.play()
