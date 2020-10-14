@@ -16,8 +16,9 @@ var enemy_speed = -2;
 var loop_num = 1;
 var move_down = false;
 var score = 0;
-var lives = 2;
+var lives = 3;
 var ufo_present = false
+var lastLoop = new Date() - 500;
 
 var bottom_bar_list = []
 
@@ -173,10 +174,11 @@ function draw_items(){
             }
         }
     }
-    for (let i = 0; i < lives; i++){
+    for (let i = 0; i < lives - 1; i++){
         ctx.drawImage(playerImage, player_width * i, canvas.height * 0.95, player_width, player_height);
     }
     ctx.font = "30px Georgia";
+    ctx.fillStyle = "#008000"
     ctx.fillText("Wave: " + wave.toString(), canvas.width * 0.9, canvas.height * 0.95);
     ctx.fillText("Score: " + score.toString(), canvas.width/2 - 75, canvas.height * 0.95)
     if (enemy_list[0].length == 0 && enemy_list[1].length == 0 && enemy_list[2].length == 0){
@@ -337,5 +339,6 @@ function draw() {
         }
     }
 }
+
 var fps = 60
 setInterval(draw, 1000/fps);
