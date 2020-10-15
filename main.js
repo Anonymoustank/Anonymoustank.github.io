@@ -18,7 +18,8 @@ var move_down = false;
 var score = 0;
 var lives = 3;
 var ufo_present = false
-var lastLoop = new Date() - 500;
+var lastLoop = new Date()
+var now_date = new Date()
 
 var bottom_bar_list = []
 
@@ -44,16 +45,27 @@ var explosion = new Audio('Audio/explosion.wav')
 explosion.volume = 0.1
 
 var image1 = new Image();
-image1.src = "Images/Enemy1.png";
+image1.src = "Images/Enemy1_1.gif";
+
+var image1_2 = new Image();
+image1_2.src = "Images/Enemy1_2.gif"
+
+first_frame = true
 
 var image2 = new Image();
-image2.src = "Images/Enemy2.png";
+image2.src = "Images/Enemy2_1.gif";
+
+var image2_2 = new Image();
+image2_2.src = "Images/Enemy2_2.gif"
 
 var image3 = new Image();
-image3.src = "Images/Enemy4.png";
+image3.src = "Images/Enemy3_1.gif";
+
+var image3_2 = new Image();
+image3_2.src = "Images/Enemy3_2.gif"
 
 dead = false
-enemy_size = 30
+enemy_size = 40
 var enemy_list = [
     [
         [0, 0, enemy_size, enemy_size],
@@ -246,13 +258,34 @@ function draw_items(){
     for (let row in enemy_list){
         for (let enemy in enemy_list[row]){
             if (row == 0){
-                var myImage = image1
+                if (first_frame){
+                    var myImage = image1
+                }
+                else {
+                    var myImage = image1_2
+                }
+                lastLoop = new Date()
+                console.log(Math.abs(lastLoop - now_date))
             }
             else if (row == 1){
-                var myImage = image2
+                if (first_frame){
+                    var myImage = image2
+                }
+                else {
+                    var myImage = image2_2
+                }
+                lastLoop = new Date()
+                console.log(Math.abs(lastLoop - now_date))
             }
             else if (row == 2){
-                var myImage = image3
+                if (first_frame){
+                    var myImage = image3
+                }
+                else {
+                    var myImage = image3_2
+                }
+                lastLoop = new Date()
+                console.log(Math.abs(lastLoop - now_date))
             }
             enemy_list[row][enemy][0] = enemy_list[row][enemy][0] + enemy_speed
             if (move_down){
@@ -263,6 +296,10 @@ function draw_items(){
                 enemy_bullet_list.push([enemy_list[row][enemy][0] + enemy_list[row][enemy][2]/2, enemy_list[row][enemy][1] + (row + 1) * 10, 5, 10])
             }
         }
+    }
+    if (Math.abs(lastLoop - now_date) >= 500){
+        first_frame = !first_frame
+        now_date = new Date()
     }
     if (move_down){
         time_since_move_down = performance.now()
