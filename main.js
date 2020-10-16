@@ -75,7 +75,6 @@ var enemy_list = [
         [0, 0, enemy_size, enemy_size],
 
     ],
-
     [
         [0, 0, enemy_size, enemy_size],
         [0, 0, enemy_size, enemy_size],
@@ -92,7 +91,6 @@ var enemy_list = [
         [0, 0, enemy_size, enemy_size],
 
     ]
-
 ]
 
 var bullet_list = []
@@ -125,6 +123,26 @@ function has_collided(list1, list2, row){
     }
     
 }
+var triangle1 = []
+var triangle2 = []
+var triangle3 = []
+function make_triangle(num, x_val, y_val, list){
+    let rect_height = 10
+    while (num > 1){
+        for (let i = 0; i < num; i++){
+            ctx.fillRect(x_val + (5 * (i + 1)), y_val, 5, rect_height)
+            triangle1.push([x_val + (5 * (i + 1)), y_val, 5, rect_height])
+        }
+        x_val = x_val + 12.5
+        y_val = y_val + rect_height
+        num -= 5
+    }
+}
+
+make_triangle(26, canvas.width * 0.1, canvas.height * 0.65, triangle1)
+make_triangle(26, canvas.width * 0.45, canvas.height * 0.65, triangle2)
+make_triangle(26, canvas.width * 0.8, canvas.height * 0.65, triangle3)
+var triangle_list = [triangle1, triangle2, triangle3]
 
 function randomNumber(min, max) {  
     return Math.floor(Math.random() * (max - min) + min); 
@@ -265,7 +283,6 @@ function draw_items(){
                     var myImage = image1_2
                 }
                 lastLoop = new Date()
-                console.log(Math.abs(lastLoop - now_date))
             }
             else if (row == 1){
                 if (first_frame){
@@ -275,7 +292,6 @@ function draw_items(){
                     var myImage = image2_2
                 }
                 lastLoop = new Date()
-                console.log(Math.abs(lastLoop - now_date))
             }
             else if (row == 2){
                 if (first_frame){
@@ -285,7 +301,6 @@ function draw_items(){
                     var myImage = image3_2
                 }
                 lastLoop = new Date()
-                console.log(Math.abs(lastLoop - now_date))
             }
             enemy_list[row][enemy][0] = enemy_list[row][enemy][0] + enemy_speed
             if (move_down){
@@ -297,7 +312,7 @@ function draw_items(){
             }
         }
     }
-    if (Math.abs(lastLoop - now_date) >= 500){
+    if (Math.abs(lastLoop - now_date) >= 500 * (Math.abs(2/enemy_speed))){
         first_frame = !first_frame
         now_date = new Date()
     }
@@ -306,7 +321,19 @@ function draw_items(){
     }
     move_down = false
     var player = ctx.drawImage(playerImage, x, y, player_width, player_height);
+    for (let rect in triangle1){
+        ctx.fillRect(triangle1[rect][0], triangle1[rect][1], triangle1[rect][2], triangle1[rect][3])
+    }
     for (let i in bullet_list){
+        for (let triangle in triangle_list){
+            for (let rect in triangle_list[triangle]){
+                if (has_collided(bullet_list[i], triangle_list[triangle][rect], -1)){
+                    bullet_list.splice(i, 1)
+                    triangle_list[triangle].splice(rect, 1)
+                    cooldown -= 500
+                }
+            }
+        }
         ctx.fillStyle = "#eee";
         if (bullet_list[i][1] > 0){
             ctx.fillRect(bullet_list[i][0], bullet_list[i][1], bullet_list[i][2], bullet_list[i][3])
