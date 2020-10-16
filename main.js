@@ -245,6 +245,13 @@ function draw_items(){
     }
     for (let row in enemy_list){
         for (let enemy in enemy_list[row]){
+            for (let triangle in triangle_list){
+                for (let rect in triangle_list[triangle]){
+                    if (has_collided(triangle_list[triangle][rect], enemy_list[row][enemy], row)){
+                        triangle_list[triangle].splice(rect, 1)
+                    }
+                }
+            }
             if (enemy_list[row][enemy][1] + (row + 1) * 10 > y){
                 dead = true
             }
@@ -348,6 +355,14 @@ function draw_items(){
         ctx.fillRect(bottom_bar_list[bar][0], bottom_bar_list[bar][1], bottom_bar_list[bar][2], bottom_bar_list[bar][3])
     }
     for (let i in enemy_bullet_list){
+        for (let triangle in triangle_list){
+            for (let rect in triangle_list[triangle]){
+                if (has_collided(enemy_bullet_list[i], triangle_list[triangle][rect], -1)){
+                    enemy_bullet_list.splice(i, 1)
+                    triangle_list[triangle].splice(rect, 1)
+                }
+            }
+        }
         ctx.fillStyle = "#FF0000";
         for (let bar in bottom_bar_list){
             if(has_collided(enemy_bullet_list[i], bottom_bar_list[bar], -1)){
