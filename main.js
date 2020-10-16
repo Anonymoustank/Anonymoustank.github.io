@@ -123,26 +123,25 @@ function has_collided(list1, list2, row){
     }
     
 }
-var triangle1 = []
-var triangle2 = []
-var triangle3 = []
-function make_triangle(num, x_val, y_val, list){
+
+function make_triangle(num, x_val, y_val){
     let rect_height = 10
+    let list = []
     while (num > 1){
         for (let i = 0; i < num; i++){
-            ctx.fillRect(x_val + (5 * (i + 1)), y_val, 5, rect_height)
-            triangle1.push([x_val + (5 * (i + 1)), y_val, 5, rect_height])
+            list.push([x_val + (5 * (i + 1)), y_val, 5, rect_height])
         }
         x_val = x_val + 12.5
         y_val = y_val + rect_height
         num -= 5
     }
+    return list
 }
+var triangle_list = [make_triangle(26, canvas.width * 0.1, canvas.height * 0.65), make_triangle(26, canvas.width * 0.275, canvas.height * 0.65), make_triangle(26, canvas.width * 0.45, canvas.height * 0.65), make_triangle(26, canvas.width * 0.625, canvas.height * 0.65), make_triangle(26, canvas.width * 0.8, canvas.height * 0.65)]
 
-make_triangle(26, canvas.width * 0.1, canvas.height * 0.65, triangle1)
-make_triangle(26, canvas.width * 0.45, canvas.height * 0.65, triangle2)
-make_triangle(26, canvas.width * 0.8, canvas.height * 0.65, triangle3)
-var triangle_list = [triangle1, triangle2, triangle3]
+for (let i in triangle_list){
+    console.log(triangle_list[i])
+}
 
 function randomNumber(min, max) {  
     return Math.floor(Math.random() * (max - min) + min); 
@@ -328,8 +327,11 @@ function draw_items(){
     }
     move_down = false
     var player = ctx.drawImage(playerImage, x, y, player_width, player_height);
-    for (let rect in triangle1){
-        ctx.fillRect(triangle1[rect][0], triangle1[rect][1], triangle1[rect][2], triangle1[rect][3])
+    ctx.fillStyle = "#4DA6FF"
+    for (let triangle in triangle_list){
+        for (let rect in triangle_list[triangle]){
+            ctx.fillRect(triangle_list[triangle][rect][0], triangle_list[triangle][rect][1], triangle_list[triangle][rect][2], triangle_list[triangle][rect][3])
+        }
     }
     for (let i in bullet_list){
         for (let triangle in triangle_list){
