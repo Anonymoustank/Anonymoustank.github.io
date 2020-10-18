@@ -66,39 +66,22 @@ image3_2.src = "Images/Enemy3_2.gif"
 
 dead = false
 enemy_size = 40
-var enemy_list = [
-    [
-        [0, 0, enemy_size, enemy_size],
-        [0, 0, enemy_size, enemy_size],
-        [0, 0, enemy_size, enemy_size],
-        [0, 0, enemy_size, enemy_size],
-        [0, 0, enemy_size, enemy_size],
+var enemy_list = []
 
-    ],
-    [
-        [0, 0, enemy_size, enemy_size],
-        [0, 0, enemy_size, enemy_size],
-        [0, 0, enemy_size, enemy_size],
-        [0, 0, enemy_size, enemy_size],
-        [0, 0, enemy_size, enemy_size],
-
-    ],
-    [
-        [0, 0, enemy_size, enemy_size],
-        [0, 0, enemy_size, enemy_size],
-        [0, 0, enemy_size, enemy_size],
-        [0, 0, enemy_size, enemy_size],
-        [0, 0, enemy_size, enemy_size],
-
-    ]
-]
-
+function create_enemy_list(){
+    for (let i = 0; i < 3; i++){
+        enemy_list[i] = []
+        for (let j = 0; j < 5; j++){
+            enemy_list[i].push([0, 0, enemy_size, enemy_size])
+        }
+    }
+}
+create_enemy_list()
 var bullet_list = []
 var enemy_bullet_list = []
 var cooldown = performance.now() - 1000
 
 var time_since_move_down = performance.now()
-
 
 function has_collided(list1, list2, row){
     let x1 = list1[0]
@@ -123,7 +106,6 @@ function has_collided(list1, list2, row){
     }
     
 }
-
 function make_triangle(num, x_val, y_val){
     let rect_height = 10
     let list = []
@@ -213,7 +195,7 @@ function draw_items(){
     if (enemy_list[0].length == 0 && enemy_list[1].length == 0 && enemy_list[2].length == 0){
         ufo_present = false
         time_since_ufo = performance.now()
-        enemy_list = [[[0, 0, enemy_size, enemy_size],[0, 0, enemy_size, enemy_size],[0, 0, enemy_size, enemy_size],[0, 0, enemy_size, enemy_size],[0, 0, enemy_size, enemy_size],], [[0, 0, enemy_size, enemy_size],[0, 0, enemy_size, enemy_size],[0, 0, enemy_size, enemy_size],[0, 0, enemy_size, enemy_size],[0, 0, enemy_size, enemy_size],], [[0, 0, enemy_size, enemy_size],[0, 0, enemy_size, enemy_size],[0, 0, enemy_size, enemy_size],[0, 0, enemy_size, enemy_size],[0, 0, enemy_size, enemy_size],]]
+        create_enemy_list()
         loop_num = 1
         if (Math.abs(enemy_speed) < 15){
             enemy_speed = Math.abs(enemy_speed)
@@ -352,8 +334,8 @@ function draw_items(){
             bullet_list.splice(i, 1)
         }
     }
+    ctx.fillStyle = "#008000";
     for (let bar in bottom_bar_list){
-        ctx.fillStyle = "#008000";
         ctx.fillRect(bottom_bar_list[bar][0], bottom_bar_list[bar][1], bottom_bar_list[bar][2], bottom_bar_list[bar][3])
     }
     for (let i in enemy_bullet_list){
@@ -420,6 +402,5 @@ function draw() {
         }
     }
 }
-
 var fps = 60
 setInterval(draw, 1000/fps);
