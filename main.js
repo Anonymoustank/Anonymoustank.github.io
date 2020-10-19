@@ -1,18 +1,19 @@
 var canvas = document.getElementById("myCanvas");
 canvas.width  = window.innerWidth;
 canvas.height = window.innerHeight;
-var dx = 4;
+console.log(canvas.width, canvas.height)
+var dx = canvas.width/384;
 var ctx = canvas.getContext("2d");
 var rightPressed = false;
 var leftPressed = false;
-var player_width = 75;
-var player_height = 30;
+var player_width = canvas.width/20.48;
+var player_height = canvas.height/25.1333;
 var x = canvas.width/2 - player_width/2;
 var y = window.innerHeight * 0.75;
 document.addEventListener("keydown", keyDownHandler, false);
 document.addEventListener("keyup", keyUpHandler, false);
 var wave = 1
-var enemy_speed = -2;
+var enemy_speed = -1 * (dx/2);
 var loop_num = 1;
 var move_down = false;
 var score = 0;
@@ -65,7 +66,7 @@ var image3_2 = new Image();
 image3_2.src = "Images/Enemy3_2.gif"
 
 dead = false
-enemy_size = 40
+enemy_size = canvas.width/38.4
 var enemy_list = []
 
 function create_enemy_list(){
@@ -120,10 +121,6 @@ function make_triangle(num, x_val, y_val){
     return list
 }
 var triangle_list = [make_triangle(26, canvas.width * 0.1, canvas.height * 0.65), make_triangle(26, canvas.width * 0.275, canvas.height * 0.65), make_triangle(26, canvas.width * 0.45, canvas.height * 0.65), make_triangle(26, canvas.width * 0.625, canvas.height * 0.65), make_triangle(26, canvas.width * 0.8, canvas.height * 0.65)]
-
-for (let i in triangle_list){
-    console.log(triangle_list[i])
-}
 
 function randomNumber(min, max) {  
     return Math.floor(Math.random() * (max - min) + min); 
@@ -328,7 +325,7 @@ function draw_items(){
         ctx.fillStyle = "#eee";
         if (bullet_list[i][1] > 0){
             ctx.fillRect(bullet_list[i][0], bullet_list[i][1], bullet_list[i][2], bullet_list[i][3])
-            bullet_list[i][1] -= 5
+            bullet_list[i][1] -= canvas.width/307
         }
         else{
             bullet_list.splice(i, 1)
@@ -366,7 +363,7 @@ function draw_items(){
             }
             else {
                 ctx.fillRect(enemy_bullet_list[i][0], enemy_bullet_list[i][1], enemy_bullet_list[i][2], enemy_bullet_list[i][3])
-                enemy_bullet_list[i][1] += 5
+                enemy_bullet_list[i][1] += canvas.width/307
             }
         }
         else{
