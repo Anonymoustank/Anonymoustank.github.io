@@ -108,15 +108,15 @@ function has_collided(list1, list2, row){
     
 }
 function make_triangle(num, x_val, y_val){
-    let rect_height = 10
+    let rect_height = canvas.height/75.4
     let list = []
     while (num > 1){
         for (let i = 0; i < num; i++){
-            list.push([x_val + (5 * (i + 1)), y_val, 5, rect_height])
+            list.push([x_val + ((canvas.width/307.2) * (i + 1)), y_val, canvas.width/307.2, rect_height])
         }
-        x_val = x_val + 12.5
+        x_val = x_val + ((canvas.width/307.2) ** 2)/2
         y_val = y_val + rect_height
-        num -= 5
+        num -= canvas.width/307.2
     }
     return list
 }
