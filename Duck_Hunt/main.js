@@ -1,4 +1,5 @@
 var canvas = document.getElementById("myCanvas");
+console.log(window.innerWidth, window.innerHeight)
 canvas.width  = window.innerWidth;
 canvas.height = window.innerHeight;
 var ctx = canvas.getContext("2d");
@@ -10,8 +11,8 @@ class GameObject {
         this.image = new Image()
         this.image.src = image
     }
-    draw(){
-        ctx.drawImage(this.image, this.x, this.y, this.image.width, this.image.height)
+    draw(width = this.image.width, height = this.image.height){
+        ctx.drawImage(this.image, this.x, this.y, width, height)
     }
 }
 
@@ -25,7 +26,7 @@ class GIF extends GameObject{
     draw(){
         this.image_being_drawn = this.image_list[this.index]
         ctx.drawImage(this.image_being_drawn, this.x, this.y, this.image_being_drawn.width, this.image_being_drawn.height)
-        if (performance.now() - this.cooldown > 250){
+        if (performance.now() - this.cooldown >= 200){
             if (this.image_list.length - 1 == this.index){
                 this.index = 0
             }
@@ -39,6 +40,8 @@ class GIF extends GameObject{
         this.image_list.push(image)
     }
 }
+
+var background = new GameObject(0, 0, "Images/Background2.png")
 
 var player = new GameObject(canvas.width / 2, canvas.height / 2, "Images/3.png")
 player.lives = 5
@@ -54,6 +57,7 @@ function draw(){
     if (!running){
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         ctx.beginPath()
+        background.draw(canvas.width, canvas.height)
         player.draw()
         dog_walking.draw()
         ctx.closePath()

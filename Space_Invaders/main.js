@@ -91,7 +91,7 @@ function has_collided(list1, list2, row){
     let height1 = list1[3]
 
     let x2 = list2[0]
-    let y2 = list2[1] + (row + 1) * 10
+    let y2 = list2[1] + (row + 1) * canvas.height/75.4
     let width2 = list2[2]
     let height2 = list2[3]
 
@@ -230,7 +230,7 @@ function draw_items(){
                     }
                 }
             }
-            if (enemy_list[row][enemy][1] + (row + 1) * 10 > y){
+            if (enemy_list[row][enemy][1] + (row + 1) * canvas.height/75.4 > y){
                 dead = true
             }
             if (enemy_list[row][enemy][0] >= canvas.width - enemy_list[row][enemy][2] || enemy_list[row][enemy][0] < 0 + enemy_list[row][enemy][2]/2) {
@@ -291,9 +291,9 @@ function draw_items(){
             if (move_down){
                 enemy_list[row][enemy][1] = enemy_list[row][enemy][1] + enemy_size
             }
-            ctx.drawImage(myImage, enemy_list[row][enemy][0], enemy_list[row][enemy][1] + (row + 1) * 10, enemy_list[row][enemy][2], enemy_list[row][enemy][3]);
+            ctx.drawImage(myImage, enemy_list[row][enemy][0], enemy_list[row][enemy][1] + (row + 1) * canvas.height/75.4, enemy_list[row][enemy][2], enemy_list[row][enemy][3]);
             if (randomNumber(1, 850) == 5 && enemy_list[row][enemy][1] < 3 * canvas.height/5){
-                enemy_bullet_list.push([enemy_list[row][enemy][0] + enemy_list[row][enemy][2]/2, enemy_list[row][enemy][1] + (row + 1) * 10, 5, 10])
+                enemy_bullet_list.push([enemy_list[row][enemy][0] + enemy_list[row][enemy][2]/2, enemy_list[row][enemy][1] + (row + 1) * canvas.height/75.4, 5, 10])
             }
         }
     }
