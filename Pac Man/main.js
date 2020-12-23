@@ -5,8 +5,28 @@ canvas.height = window.innerHeight;
 var ctx = canvas.getContext("2d");
 var dead = false;
 var keyBeingPressed = false
+var hasStarted = false
 document.addEventListener("keydown", keyDownHandler, false);
-var speed = 4;
+var speed = 5;
+var potential_move = []
+var nodes = []
+var starting_position = 300
+for (let i = starting_position; i <= starting_position + 900; i = i + 5){
+    if (i === 100){
+        for (let j = 100; j <= 250; j = j + 5){
+            nodes.push([i, j])
+        }
+    }
+    else if (i === starting_position + 200){
+        for (let j = 100; j <= 500; j = j + 5){
+            nodes.push([i, j])
+        }
+    }
+    else {
+        nodes.push([i, 100])
+    }
+}
+
 class GameObject {
     constructor(x, y, image){
         this.x = x
@@ -22,20 +42,16 @@ class GameObject {
 function keyDownHandler(e) {
     if (running == false){
         if(e.key == "Right" || e.key == "ArrowRight" || e.key == "d") {
-            keyBeingPressed = "rightPressed"
-            player.degrees = 90
+            keyBeingPressed = "rightPressed" 
         }
         else if(e.key == "Left" || e.key == "ArrowLeft" || e.key == "a") {
             keyBeingPressed = "leftPressed"
-            player.degrees = 270
         }
         else if (e.key == "Down" || e.key == "ArrowDown" || e.key == "s"){
             keyBeingPressed = "downPressed"
-            player.degrees = 180
         }
         else if (e.key == "Up" || e.key == "ArrowUp" || e.key == "w"){
             keyBeingPressed = "upPressed"
-            player.degrees = 0
         }
     }
 }
@@ -114,27 +130,58 @@ class GIF extends GameObject{
     
 }
 
-var player = new GIF(canvas.width / 2, canvas.height / 2, [["Images/PlayerUP - 1.png", "Images/PlayerUP - 2.png"], ["Images/PlayerRIGHT - 1.png", "Images/PlayerRIGHT - 2.png"], ["Images/PlayerLEFT - 1.png", "Images/PlayerLEFT - 2.png"], ["Images/PlayerDOWN - 1.png", "Images/PlayerDOWN - 2.png"]], 4)
+var player = new GIF(400, 400, [["Images/PlayerUP - 1.png", "Images/PlayerUP - 2.png"], ["Images/PlayerRIGHT - 1.png", "Images/PlayerRIGHT - 2.png"], ["Images/PlayerLEFT - 1.png", "Images/PlayerLEFT - 2.png"], ["Images/PlayerDOWN - 1.png", "Images/PlayerDOWN - 2.png"]], 4)
+var pac_man_circle = new GameObject(player.x - 5, player.y - 10, "Images/Circle.png")
 
 player.lives = 3
+
+function keyCheck(){
+    if (keyBeingPressed == "rightPressed"){
+        potential_move = [player.x + speed, player.y]
+    }
+    else if (keyBeingPressed == "leftPressed"){
+        potential_move = [player.x - speed, player.y]
+    }
+    else if (keyBeingPressed == "downPressed"){
+        potential_move = [player.x, player.y + speed]
+    }
+    else if (keyBeingPressed == "upPressed"){
+        potential_move = [player.x, player.y - speed]
+    }
+}
 
 function draw(){
     if (!running){
         ctx.clearRect(0, 0, canvas.width, canvas.height)
         ctx.beginPath()
-        if (keyBeingPressed == "rightPressed"){
-            player.x += speed
-        }
-        else if (keyBeingPressed == "leftPressed"){
-            player.x -= speed
-        }
-        else if (keyBeingPressed == "downPressed"){
-            player.y += speed
-        }
-        else if (keyBeingPressed == "upPressed"){
-            player.y -= speed
-        }
+        keyCheck()
         player.draw()
+        if (!hasStarted){
+            pac_man_circle.draw()
+        }
+        for (let node of nodes){
+            if (node[0] === potential_move[0] && node[1] === potential_move[1]){
+                hasStarted = true
+                if (keyBeingPressed == "rightPressed"){
+                    player.x += speed
+                    player.degrees = 90
+                }
+                else if (keyBeingPressed == "leftPressed"){
+                    player.x -= speed
+                    player.degrees = 270
+                }
+                else if (keyBeingPressed == "downPressed"){
+                    player.y += speed
+                    player.degrees = 180
+                }
+                else if (keyBeingPressed == "upPressed"){
+                    player.y -= speed
+                    player.degrees = 0
+                }
+            }
+            ctx.fillRect(node[0], node[1], 1, 1)
+        }
+        ctx.fill()
         ctx.closePath()
     }
 }
