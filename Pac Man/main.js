@@ -55,14 +55,14 @@ for (let node of nodes){
     }
     catch (e){}
     try {
-        eval('test_node3 = node' + node.x + (node.y + 5))
+        eval('var test_node3 = node' + node.x + (node.y + 5))
         if (nodes.has(test_node3)){
             node.connecting_nodes.push(test_node3)
         }
     }
     catch (e){}
     try{
-        eval('test_node4 = node' + node.x + (node.y - 5))
+        eval('var test_node4 = node' + node.x + (node.y - 5))
         if (nodes.has(test_node4)){
             node.connecting_nodes.push(test_node4)
         }
@@ -230,6 +230,40 @@ function player_move(){
         hasStarted = true
     }
 }
+
+
+function pathfind(node, target, list, already_visited){
+    list.push(node)
+    already_visited.add(node)
+    var current_node = node
+    while (current_node != target){
+        let amt_of_nodes = 0
+        for(let next_node of current_node.connecting_nodes){
+            if (next_node == target){
+                list.push(next_node)
+                return;
+            }
+            else if (!already_visited.has(next_node)){
+                current_node = next_node
+                list.push(next_node)
+                already_visited.add(next_node)
+                amt_of_nodes += 1
+                break
+            }
+        }
+        if (amt_of_nodes == 0){
+            if (current_node != node){
+                list.splice(list.indexOf(current_node), 1)
+                current_node = list[list.length - 1]
+                console.log(list.length)
+            }
+        }
+    }
+}
+
+test_list = []
+already_visited = new Set()
+pathfind(node705100, node500350, test_list, already_visited)
 
 function draw(){
     if (!running){
