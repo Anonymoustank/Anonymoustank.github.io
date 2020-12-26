@@ -22,18 +22,65 @@ class node {
     }
 }
 for (let i = starting_position; i <= starting_position + 900; i = i + 5){
-    if (i === starting_position + 200){
+    if (i == starting_position + 200){
         for (let j = starting_y_position; j <= starting_y_position + 400; j = j + 5){
             eval('var node' + i + j + "= new node(" + i + "," + j + ")")
             eval('nodes.add(' + "node" + i + j + ')')
             // nodes.push(new node(i, j))
         }
     }
-    else {
-        // nodes.push(new node(i, starting_y_position))
-        eval('var node' + i + starting_y_position + "= new node(" + i + "," + starting_y_position + ")")
-        eval('nodes.add(' + "node" + i + starting_y_position + ')')
+    else if (i == starting_position + 250){
+        for (let j = starting_y_position + 550; j >= starting_y_position + 400; j = j - 5){
+            eval('var node' + i + j + "= new node(" + i + "," + j + ")")
+            eval('nodes.add(' + "node" + i + j + ')')
+        }
     }
+    else if (i == starting_position){
+        for (let j = starting_y_position; j <= starting_y_position + 150; j = j + 5){
+            eval('var node' + i + j + "= new node(" + i + "," + j + ")")
+            eval('nodes.add(' + "node" + i + j + ')')
+        }
+        for (let j = starting_y_position + 550; j >= starting_y_position + 400; j = j - 5){
+            eval('var node' + i + j + "= new node(" + i + "," + j + ")")
+            eval('nodes.add(' + "node" + i + j + ')')
+        }
+    }
+    else if (i == starting_position + 375){
+        for (let j = starting_y_position; j <= starting_y_position + 400; j = j + 5){
+            eval('var node' + i + j + "= new node(" + i + "," + j + ")")
+            eval('nodes.add(' + "node" + i + j + ')')
+        }
+    }
+    else if (i == starting_position + 235){
+        for (let j = starting_y_position + 180; j <= starting_y_position + 270; j = j + 5){
+            eval('var node' + i + j + "= new node(" + i + "," + j + ")")
+            eval('nodes.add(' + "node" + i + j + ')')
+        }
+    }
+    if (i <= starting_position + 300 && i >= starting_position + 235){
+        let j = starting_y_position + 270
+        eval('var node' + i + j + "= new node(" + i + "," + j + ")")
+        eval('nodes.add(' + "node" + i + j + ')')
+    }
+    if (i <= starting_position + 375 && i >= starting_position + 235){
+        let j = starting_y_position + 180
+        eval('var node' + i + j + "= new node(" + i + "," + j + ")")
+        eval('nodes.add(' + "node" + i + j + ')')
+    }
+    if (i <= starting_position + 550){
+        let j = starting_y_position + 400
+        eval('var node' + i + j + "= new node(" + i + "," + j + ")")
+        eval('nodes.add(' + "node" + i + j + ')')
+    }
+    if (i <= starting_position + 200){
+        let j = starting_y_position + 150
+        eval('var node' + i + j + "= new node(" + i + "," + j + ")")
+        eval('nodes.add(' + "node" + i + j + ')')
+    }
+
+    // nodes.push(new node(i, starting_y_position))
+    eval('var node' + i + starting_y_position + "= new node(" + i + "," + starting_y_position + ")")
+    eval('nodes.add(' + "node" + i + starting_y_position + ')')
     // nodes.push(new node(i, starting_y_position + 550))
     eval('var node' + i + (starting_y_position + 550) + "= new node(" + i + "," + (starting_y_position + 550) + ")")
     eval('nodes.add(' + "node" + i + (starting_y_position + 550) + ')')
@@ -233,6 +280,8 @@ function player_move(){
 
 
 function pathfind(node, target, list, already_visited){
+    already_visited.clear()
+    list.splice(0, list.length)
     list.push(node)
     already_visited.add(node)
     var current_node = node
@@ -255,7 +304,6 @@ function pathfind(node, target, list, already_visited){
             if (current_node != node){
                 list.splice(list.indexOf(current_node), 1)
                 current_node = list[list.length - 1]
-                console.log(list.length)
             }
         }
     }
@@ -263,7 +311,8 @@ function pathfind(node, target, list, already_visited){
 
 test_list = []
 already_visited = new Set()
-pathfind(node705100, node500350, test_list, already_visited)
+pathfind(node705650, node600370, test_list, already_visited)
+console.log(test_list)
 
 function draw(){
     if (!running){
