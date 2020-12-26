@@ -6,7 +6,6 @@ var ctx = canvas.getContext("2d");
 var dead = false;
 var keyBeingPressed = false
 var hasStarted = false
-var previous_key = false
 document.addEventListener("keydown", keyDownHandler, false);
 var speed = 5;
 var potential_move = []
@@ -15,6 +14,10 @@ var nodes = new Set()
 var starting_position = 300
 var starting_y_position = 100
 var cooldown = performance.now()
+var start_timer = performance.now()
+var first_loop = true
+var start_audio = new Audio('Audio/pacman_beginning.wav')
+start_audio.volume = 0.25
 
 class node {
     constructor(x, y, connecting_nodes = []){
@@ -334,40 +337,59 @@ function pathfind(node, target, list, already_visited){
 test_list = []
 already_visited = new Set()
 pathfind(node705650, node600370, test_list, already_visited)
-console.log(test_list)
 
 function draw(){
     if (!running){
         ctx.clearRect(0, 0, canvas.width, canvas.height)
-        ctx.beginPath()
-        // keyCheck()
-        player.draw()
-        if (!hasStarted){
-            pac_man_circle.draw()
+        if (first_loop){
+            start_timer = performance.now()
+            first_loop = false
+            start_audio.play()
         }
-        try {
-            player_move()
+        ctx.textAlign = "center"
+        ctx.font = "60px Georgia";
+        if (performance.now() - start_timer <= Math.floor((start_audio.duration * 1000)) - 3000){
+            ctx.fillText("Ready!", canvas.width/2, canvas.height/2)
         }
-        catch (error){}
-        if (performance.now() - cooldown > 250){
-            if (player.degrees == 90){
-                keyBeingPressed = "right"
-            }
-            else if (player.degrees == 270){
-               keyBeingPressed = "left"
-            }
-            else if (player.degrees == 180){
-                keyBeingPressed = "down"
-            }
-            else if (player.degrees == 0){
-                keyBeingPressed = "up"
-            }
+        else if (performance.now() - start_timer <= Math.floor((start_audio.duration * 1000)) - 2000){
+            ctx.fillText("3", canvas.width/2, canvas.height/2)
         }
-        for (let node of nodes){
-            ctx.fillRect(node.x, node.y, 1, 1)
+        else if (performance.now() - start_timer <= Math.floor((start_audio.duration * 1000)) - 1000){
+            ctx.fillText("2", canvas.width/2, canvas.height/2)
         }
-        ctx.fill()
-        ctx.closePath()
+        else if (performance.now() - start_timer <= Math.floor((start_audio.duration * 1000))){
+            ctx.fillText("1", canvas.width/2, canvas.height/2)
+        }
+        else {
+            ctx.beginPath()
+            player.draw()
+            if (!hasStarted){
+                pac_man_circle.draw()
+            }
+            try {
+                player_move()
+            }
+            catch (error){}
+            if (performance.now() - cooldown > 250){
+                if (player.degrees == 90){
+                    keyBeingPressed = "right"
+                }
+                else if (player.degrees == 270){
+                keyBeingPressed = "left"
+                }
+                else if (player.degrees == 180){
+                    keyBeingPressed = "down"
+                }
+                else if (player.degrees == 0){
+                    keyBeingPressed = "up"
+                }
+            }
+            for (let node of nodes){
+                ctx.fillRect(node.x, node.y, 1, 1)
+            }
+            ctx.fill()
+            ctx.closePath()
+        }
     }
 }
 

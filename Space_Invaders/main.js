@@ -187,8 +187,10 @@ function draw_items(){
     }
     ctx.font = "30px Georgia";
     ctx.fillStyle = "#008000"
-    ctx.fillText("Wave: " + wave.toString(), canvas.width * 0.9, canvas.height * 0.95);
-    ctx.fillText("Score: " + score.toString(), canvas.width/2 - 75, canvas.height * 0.95)
+    ctx.textAlign = "right"
+    ctx.fillText("Wave: " + wave.toString(), canvas.width, canvas.height * 0.95);
+    ctx.textAlign = "center"
+    ctx.fillText("Score: " + score.toString(), canvas.width/2, canvas.height * 0.95)
     if (enemy_list[0].length == 0 && enemy_list[1].length == 0 && enemy_list[2].length == 0){
         ufo_present = false
         time_since_ufo = performance.now()
@@ -388,11 +390,12 @@ function draw() {
         }
         else {
             ctx.beginPath();
+            ctx.textAlign = "center"
             ctx.font = "80px Georgia";
-            ctx.fillText("You Lose", canvas.width/2 - 150, canvas.height * 0.2)
+            ctx.fillText("You Lose", canvas.width/2, canvas.height * 0.2)
             ctx.font = "30px Georgia";
-            ctx.fillText("Wave: " + wave.toString(), canvas.width/2 - 75, canvas.height/2);
-            ctx.fillText("Final Score: " + score.toString(), canvas.width/2 - 75, canvas.height/2 - canvas.height/8)
+            ctx.fillText("Wave: " + wave.toString(), canvas.width/2, canvas.height/2);
+            ctx.fillText("Final Score: " + score.toString(), canvas.width/2, canvas.height/2 - canvas.height/8)
             ctx.fillStyle = "#eee";
             ctx.fill();
             ctx.closePath();

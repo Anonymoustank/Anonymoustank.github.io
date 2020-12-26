@@ -1,2 +1,2 @@
-Link to Bird/Dog Animations: https://www.mariomayhem.com/downloads/sprites/duck_hunt_nes_sprites.php
-Link to Background png: https://codepen.io/blarz/pen/pqOrRx
+Link to Audio: https://www.classicgaming.cc/classics/pac-man/sounds
+Link to Spritesheet: http://pixelartmaker.com/art/c5571d953a81efc

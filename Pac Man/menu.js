@@ -14,14 +14,16 @@ document.body.onmousedown = on_my_click;
 function draw_menu(){
     ctx.beginPath();
 
+    ctx.textAlign = "center"
+
     ctx.font = "60px Georgia";
-    ctx.fillText("Instructions: ", canvas.width/2 - 150, canvas.height * 0.2)
+    ctx.fillText("Instructions: ", canvas.width/2, canvas.height * 0.2)
 
     ctx.font = "30px Georgia"
-    ctx.fillText("Use WASD or the arrow keys to move", canvas.width/2 - 230, canvas.height * 0.35)
+    ctx.fillText("Use WASD or the arrow keys to move", canvas.width/2, canvas.height * 0.35)
 
     ctx.font = "60px Georgia";
-    ctx.fillText("Click the mouse to begin", canvas.width/2 - 300, canvas.height * 0.75)
+    ctx.fillText("Click the mouse to begin", canvas.width/2, canvas.height * 0.75)
 
     ctx.fillStyle = "#eee";
     ctx.fill();
