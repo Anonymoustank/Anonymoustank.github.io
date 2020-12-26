@@ -10,9 +10,11 @@ var previous_key = false
 document.addEventListener("keydown", keyDownHandler, false);
 var speed = 5;
 var potential_move = []
+var junction_list = []
 var nodes = new Set()
 var starting_position = 300
 var starting_y_position = 100
+var cooldown = performance.now()
 
 class node {
     constructor(x, y, connecting_nodes = []){
@@ -115,6 +117,9 @@ for (let node of nodes){
         }
     }
     catch (e){}
+    if (node.connecting_nodes.length > 2){
+        junction_list.push(node)
+    }
 }
 
 class GameObject {
@@ -132,24 +137,23 @@ class GameObject {
 function keyDownHandler(e) {
     if (running == false){
         if(e.key == "Right" || e.key == "ArrowRight" || e.key == "d"){
-            previous_key = keyBeingPressed
-            keyBeingPressed = "rightPressed" 
+            keyBeingPressed = "right" 
+            cooldown = performance.now()
         }
         else if(e.key == "Left" || e.key == "ArrowLeft" || e.key == "a"){
-            previous_key = keyBeingPressed
-            keyBeingPressed = "leftPressed"
+            keyBeingPressed = "left"
+            cooldown = performance.now()
         }
         else if (e.key == "Down" || e.key == "ArrowDown" || e.key == "s"){
-            previous_key = keyBeingPressed
-            keyBeingPressed = "downPressed"
+            keyBeingPressed = "down"
+            cooldown = performance.now()
         }
         else if (e.key == "Up" || e.key == "ArrowUp" || e.key == "w"){
-            previous_key = keyBeingPressed
-            keyBeingPressed = "upPressed"
+            keyBeingPressed = "up"
+            cooldown = performance.now()
         }
     }
 }
-
 
 class GIF extends GameObject{
     constructor(x, y, list, amt_of_lists = 1){
@@ -229,53 +233,71 @@ var pac_man_circle = new GameObject(player.x - 5, player.y - 10, "Images/Circle.
 
 player.lives = 3
 
-function keyCheck(){
-    if (keyBeingPressed == "rightPressed"){
-        potential_move = [player.x + speed, player.y]
-    }
-    else if (keyBeingPressed == "leftPressed"){
-        potential_move = [player.x - speed, player.y]
-    }
-    else if (keyBeingPressed == "downPressed"){
-        potential_move = [player.x, player.y + speed]
-    }
-    else if (keyBeingPressed == "upPressed"){
-        potential_move = [player.x, player.y - speed]
-    }
-}
-
 function player_move(){
-    if (keyBeingPressed == "rightPressed"){
-        eval("var can_move = nodes.has(node" + (player.x + speed) + player.y + ")")
+    try {
+        if (keyBeingPressed == "right"){
+            eval("var can_move = nodes.has(node" + (player.x + speed) + player.y + ")")
+            if (can_move){
+                player.x += speed
+                player.degrees = 90
+            }
+        }
+        else if (keyBeingPressed == "left"){
+            eval("var can_move = nodes.has(node" + (player.x - speed) + player.y + ")")
+            if (can_move){
+                player.x -= speed
+                player.degrees = 270
+            }
+        }
+        else if (keyBeingPressed == "down"){
+            eval("var can_move = nodes.has(node" + player.x + (player.y + speed) + ")")
+            if (can_move){
+                player.y += speed
+                player.degrees = 180
+            } 
+        }
+        else if (keyBeingPressed == "up"){
+            eval("var can_move = nodes.has(node" + player.x + (player.y - speed) + ")")
+            if (can_move){
+                player.y -= speed
+                player.degrees = 0
+            }
+        }
         if (can_move){
-            player.x += speed
-            player.degrees = 90
+            hasStarted = true
         }
     }
-    else if (keyBeingPressed == "leftPressed"){
-        eval("var can_move = nodes.has(node" + (player.x - speed) + player.y + ")")
-        if (can_move){
-            player.x -= speed
-            player.degrees = 270
+    catch (error) {
+        if (player.degrees == 90){
+            eval("var can_move = nodes.has(node" + (player.x + speed) + player.y + ")")
+            if (can_move){
+                player.x += speed
+                player.degrees = 90
+            }
+        }
+        else if (player.degrees == 270){
+            eval("var can_move = nodes.has(node" + (player.x - speed) + player.y + ")")
+            if (can_move){
+                player.x -= speed
+                player.degrees = 270
+            }
+        }
+        else if (player.degrees == 180){
+            eval("var can_move = nodes.has(node" + player.x + (player.y + speed) + ")")
+            if (can_move){
+                player.y += speed
+                player.degrees = 180
+            } 
+        }
+        else if (player.degrees == 0){
+            eval("var can_move = nodes.has(node" + player.x + (player.y - speed) + ")")
+            if (can_move){
+                player.y -= speed
+                player.degrees = 0
+            }
         }
     }
-    else if (keyBeingPressed == "downPressed"){
-        eval("var can_move = nodes.has(node" + player.x + (player.y + speed) + ")")
-        if (can_move){
-            player.y += speed
-            player.degrees = 180
-        } 
-    }
-    else if (keyBeingPressed == "upPressed"){
-        eval("var can_move = nodes.has(node" + player.x + (player.y - speed) + ")")
-        if (can_move){
-            player.y -= speed
-            player.degrees = 0
-        }
-    }
-    if (can_move){
-        hasStarted = true
-    }
+    
 }
 
 
@@ -318,21 +340,27 @@ function draw(){
     if (!running){
         ctx.clearRect(0, 0, canvas.width, canvas.height)
         ctx.beginPath()
-        keyCheck()
+        // keyCheck()
         player.draw()
         if (!hasStarted){
             pac_man_circle.draw()
         }
         try {
             player_move()
-            previous_key = keyBeingPressed
         }
-        catch (error){
-            try {
-                keyBeingPressed = previous_key
-                player_move()
-            }  
-            catch (error){
+        catch (error){}
+        if (performance.now() - cooldown > 250){
+            if (player.degrees == 90){
+                keyBeingPressed = "right"
+            }
+            else if (player.degrees == 270){
+               keyBeingPressed = "left"
+            }
+            else if (player.degrees == 180){
+                keyBeingPressed = "down"
+            }
+            else if (player.degrees == 0){
+                keyBeingPressed = "up"
             }
         }
         for (let node of nodes){
