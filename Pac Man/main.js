@@ -1,5 +1,4 @@
 var canvas = document.getElementById("myCanvas");
-console.log(window.innerWidth, window.innerHeight)
 canvas.width  = window.innerWidth;
 canvas.height = window.innerHeight;
 var ctx = canvas.getContext("2d");
@@ -8,8 +7,6 @@ var keyBeingPressed = false
 var hasStarted = false
 document.addEventListener("keydown", keyDownHandler, false);
 var speed = 5;
-var potential_move = []
-var junction_list = []
 var nodes = new Set()
 var starting_position = 300
 var starting_y_position = 100
@@ -72,8 +69,41 @@ for (let i = starting_position; i <= starting_position + 900; i = i + 5){
         eval('var node' + i + j + "= new node(" + i + "," + j + ")")
         eval('nodes.add(' + "node" + i + j + ')')
     }
-    if (i <= starting_position + 550){
+    if (i < starting_position + 550){
         let j = starting_y_position + 400
+        eval('var node' + i + j + "= new node(" + i + "," + j + ")")
+        eval('nodes.add(' + "node" + i + j + ')')
+    }
+    else if (i == starting_position + 550){
+        for (let j = starting_y_position + 400; j <= starting_y_position + 475; j = j + 5){
+            eval('var node' + i + j + "= new node(" + i + "," + j + ")")
+            eval('nodes.add(' + "node" + i + j + ')')
+        }
+    }
+    if (i >= starting_position + 250 && i < starting_position + 725){
+        let j = starting_y_position + 475
+        eval('var node' + i + j + "= new node(" + i + "," + j + ")")
+        eval('nodes.add(' + "node" + i + j + ')')
+    }
+    else if (i == starting_position + 725){
+        for (let j = starting_y_position + 475; j >= starting_y_position; j = j - 5){
+            eval('var node' + i + j + "= new node(" + i + "," + j + ")")
+            eval('nodes.add(' + "node" + i + j + ')')
+        }
+    }
+    if (i >= starting_position + 375 && i < starting_position + 565){
+        let j = starting_y_position + 100
+        eval('var node' + i + j + "= new node(" + i + "," + j + ")")
+        eval('nodes.add(' + "node" + i + j + ')')
+    }
+    else if (i == starting_position + 565){
+        for (let j = starting_y_position + 100; j <= starting_y_position + 200; j = j + 5){
+            eval('var node' + i + j + "= new node(" + i + "," + j + ")")
+            eval('nodes.add(' + "node" + i + j + ')')
+        }
+    }
+    else if (i > starting_position + 565 && i < starting_position + 900){
+        let j = starting_y_position + 200
         eval('var node' + i + j + "= new node(" + i + "," + j + ")")
         eval('nodes.add(' + "node" + i + j + ')')
     }
@@ -81,6 +111,20 @@ for (let i = starting_position; i <= starting_position + 900; i = i + 5){
         let j = starting_y_position + 150
         eval('var node' + i + j + "= new node(" + i + "," + j + ")")
         eval('nodes.add(' + "node" + i + j + ')')
+        j = starting_y_position + 275
+        eval('var node' + i + j + "= new node(" + i + "," + j + ")")
+        eval('nodes.add(' + "node" + i + j + ')')
+    }
+    if (i >= starting_position + 375){
+        let j = starting_y_position + 325
+        eval('var node' + i + j + "= new node(" + i + "," + j + ")")
+        eval('nodes.add(' + "node" + i + j + ')')
+    }
+    if (i == starting_position + 900){
+        for (let j = starting_y_position; j <= starting_y_position + 550; j = j + 5){
+            eval('var node' + i + j + "= new node(" + i + "," + j + ")")
+            eval('nodes.add(' + "node" + i + j + ')')
+        }
     }
 
     // nodes.push(new node(i, starting_y_position))
@@ -120,9 +164,6 @@ for (let node of nodes){
         }
     }
     catch (e){}
-    if (node.connecting_nodes.length > 2){
-        junction_list.push(node)
-    }
 }
 
 class GameObject {
@@ -300,13 +341,9 @@ function player_move(){
             }
         }
     }
-    
 }
 
-
 function pathfind(node, target, list, already_visited){
-    already_visited.clear()
-    list.splice(0, list.length)
     list.push(node)
     already_visited.add(node)
     var current_node = node

@@ -1,7 +1,6 @@
 var canvas = document.getElementById("myCanvas");
 canvas.width  = window.innerWidth;
 canvas.height = window.innerHeight;
-console.log(canvas.width, canvas.height)
 var dx = canvas.width/384;
 var ctx = canvas.getContext("2d");
 var rightPressed = false;
