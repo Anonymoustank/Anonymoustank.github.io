@@ -8,6 +8,7 @@ var hasStarted = false
 document.addEventListener("keydown", keyDownHandler, false);
 var speed = 5;
 var nodes = new Set()
+var walls = []
 var starting_position = 300
 var starting_y_position = 100
 var cooldown = performance.now()
@@ -16,6 +17,17 @@ var first_loop = true
 var start_audio = new Audio('Audio/pacman_beginning.wav')
 start_audio.volume = 0.25
 
+class wall {
+    constructor(x, y, width, height){
+        this.x = x
+        this.y = y
+        this.width = width
+        this.height = height
+    }
+    draw() {
+        ctx.fillRect(this.x, this.y, this.width, this.height)
+    }
+}
 class node {
     constructor(x, y, connecting_nodes = []){
         this.x = x
@@ -23,7 +35,7 @@ class node {
         this.connecting_nodes = connecting_nodes
     }
 }
-for (let i = starting_position; i <= starting_position + 900; i = i + 5){
+for (let i = starting_position; i <= starting_position + 900; i = i + 5){ //map generation
     if (i == starting_position + 200){
         for (let j = starting_y_position; j <= starting_y_position + 400; j = j + 5){
             eval('var node' + i + j + "= new node(" + i + "," + j + ")")
@@ -134,6 +146,27 @@ for (let i = starting_position; i <= starting_position + 900; i = i + 5){
     eval('var node' + i + (starting_y_position + 550) + "= new node(" + i + "," + (starting_y_position + 550) + ")")
     eval('nodes.add(' + "node" + i + (starting_y_position + 550) + ')')
 }
+var width = 10
+var displacement = 23
+var thickness = displacement + width
+walls.push(new wall(starting_position - thickness, starting_y_position - thickness, 900 + thickness * 2, width)) //outer walls
+walls.push(new wall(starting_position + 900 + displacement, starting_y_position - thickness, width, 550 + thickness * 2))
+walls.push(new wall(starting_position - displacement, starting_y_position + 550 + displacement, 900 + displacement * 2, width))
+
+walls.push(new wall(starting_position + displacement, starting_y_position + displacement, width, 150 - displacement * 2)) //upper left
+walls.push(new wall(starting_position - thickness, starting_y_position - thickness, width, 150 + displacement * 2 + width))
+walls.push(new wall(starting_position - thickness, starting_y_position + 150 + displacement, 200 + width, width))
+walls.push(new wall(starting_position + displacement, starting_y_position + 150 - thickness, 200 - displacement * 2, width))
+walls.push(new wall(starting_position + displacement, starting_y_position + displacement, 200 - displacement * 2, width))
+walls.push(new wall(starting_position + 200 - thickness, starting_y_position + displacement, width, 150 - displacement * 2))
+
+
+walls.push(new wall(starting_position - thickness, starting_y_position + 400 - displacement, width, 150 + displacement * 2 + width)) //bottom left
+walls.push(new wall(starting_position + 250 - thickness, starting_y_position + 400 + displacement, width, 150 - displacement * 2))
+walls.push(new wall(starting_position - thickness, starting_y_position + 400 - thickness, 200 + width, width))
+walls.push(new wall(starting_position + displacement, starting_y_position + 400 + displacement, width, 150 - displacement * 2))
+walls.push(new wall(starting_position + displacement, starting_y_position + 400 + displacement, 250 - displacement * 2, width))
+walls.push(new wall(starting_position + displacement, starting_y_position + 550 - displacement, 250 - displacement * 2, width))
 
 for (let node of nodes){
     try {
@@ -174,7 +207,7 @@ class GameObject {
         this.image.src = image
     }
     draw(width = this.image.width, height = this.image.height){
-        ctx.drawImage(this.image, this.x, this.y, width, height)
+        ctx.drawImage(this.image, this.x - width/2, this.y - height/2, width, height)
     }
 }
 
@@ -242,7 +275,7 @@ class GIF extends GameObject{
         else {
             this.image_being_drawn = this.image_list[this.index]
         }
-        ctx.drawImage(this.image_being_drawn, this.x, this.y, this.image_being_drawn.width, this.image_being_drawn.height)
+        ctx.drawImage(this.image_being_drawn, this.x - this.image_being_drawn.width/2, this.y - this.image_being_drawn.height/2, this.image_being_drawn.width, this.image_being_drawn.height)
         if (performance.now() - this.cooldown >= 200){
             if (this.amt_of_lists == 1){
                 if (this.image_list.length - 1 == this.index){
@@ -273,7 +306,7 @@ class GIF extends GameObject{
 }
 
 var player = new GIF(starting_position, starting_y_position, [["Images/PlayerUP - 1.png", "Images/PlayerUP - 2.png"], ["Images/PlayerRIGHT - 1.png", "Images/PlayerRIGHT - 2.png"], ["Images/PlayerLEFT - 1.png", "Images/PlayerLEFT - 2.png"], ["Images/PlayerDOWN - 1.png", "Images/PlayerDOWN - 2.png"]], 4)
-var pac_man_circle = new GameObject(player.x - 5, player.y - 10, "Images/Circle.png")
+var pac_man_circle = new GameObject(player.x, player.y, "Images/Circle.png")
 
 player.lives = 3
 
@@ -377,6 +410,7 @@ pathfind(node705650, node600370, test_list, already_visited)
 
 function draw(){
     if (!running){
+        ctx.fillStyle = "#eee"
         ctx.clearRect(0, 0, canvas.width, canvas.height)
         if (first_loop){
             start_timer = performance.now()
@@ -398,11 +432,8 @@ function draw(){
             ctx.fillText("1", canvas.width/2, canvas.height/2)
         }
         else {
+            console.log(player.x, player.y)
             ctx.beginPath()
-            player.draw()
-            if (!hasStarted){
-                pac_man_circle.draw()
-            }
             try {
                 player_move()
             }
@@ -423,6 +454,14 @@ function draw(){
             }
             for (let node of nodes){
                 ctx.fillRect(node.x, node.y, 1, 1)
+            }
+            ctx.fillStyle = "#0000FF"
+            for (let wall of walls){
+                wall.draw()
+            }
+            player.draw()
+            if (!hasStarted){
+                pac_man_circle.draw()
             }
             ctx.fill()
             ctx.closePath()
