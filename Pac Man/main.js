@@ -65,18 +65,18 @@ for (let i = starting_position; i <= starting_position + 900; i = i + 5){ //map 
             eval('nodes.add(' + "node" + i + j + ')')
         }
     }
-    else if (i == starting_position + 235){
+    else if (i == starting_position + 285){
         for (let j = starting_y_position + 180; j <= starting_y_position + 270; j = j + 5){
             eval('var node' + i + j + "= new node(" + i + "," + j + ")")
             eval('nodes.add(' + "node" + i + j + ')')
         }
     }
-    if (i <= starting_position + 300 && i >= starting_position + 235){
+    if (i <= starting_position + 325 && i >= starting_position + 285){
         let j = starting_y_position + 270
         eval('var node' + i + j + "= new node(" + i + "," + j + ")")
         eval('nodes.add(' + "node" + i + j + ')')
     }
-    if (i <= starting_position + 375 && i >= starting_position + 235){
+    if (i <= starting_position + 375 && i >= starting_position + 285){
         let j = starting_y_position + 180
         eval('var node' + i + j + "= new node(" + i + "," + j + ")")
         eval('nodes.add(' + "node" + i + j + ')')
@@ -147,7 +147,7 @@ for (let i = starting_position; i <= starting_position + 900; i = i + 5){ //map 
     eval('nodes.add(' + "node" + i + (starting_y_position + 550) + ')')
 }
 var width = 10
-var displacement = 23
+var displacement = 22.5
 var thickness = displacement + width
 walls.push(new wall(starting_position - thickness, starting_y_position - thickness, 900 + thickness * 2, width)) //outer walls
 walls.push(new wall(starting_position + 900 + displacement, starting_y_position - thickness, width, 550 + thickness * 2))
@@ -160,13 +160,20 @@ walls.push(new wall(starting_position + displacement, starting_y_position + 150 
 walls.push(new wall(starting_position + displacement, starting_y_position + displacement, 200 - displacement * 2, width))
 walls.push(new wall(starting_position + 200 - thickness, starting_y_position + displacement, width, 150 - displacement * 2))
 
-
 walls.push(new wall(starting_position - thickness, starting_y_position + 400 - displacement, width, 150 + displacement * 2 + width)) //bottom left
 walls.push(new wall(starting_position + 250 - thickness, starting_y_position + 400 + displacement, width, 150 - displacement * 2))
 walls.push(new wall(starting_position - thickness, starting_y_position + 400 - thickness, 200 + width, width))
 walls.push(new wall(starting_position + displacement, starting_y_position + 400 + displacement, width, 150 - displacement * 2))
 walls.push(new wall(starting_position + displacement, starting_y_position + 400 + displacement, 250 - displacement * 2, width))
-walls.push(new wall(starting_position + displacement, starting_y_position + 550 - displacement, 250 - displacement * 2, width))
+walls.push(new wall(starting_position + displacement, starting_y_position + 550 - thickness, 250 - displacement * 2, width))
+
+walls.push(new wall(starting_position + 200 + displacement, starting_y_position + displacement, width, 300 + displacement * 2 + width)) //middle left
+walls.push(new wall(starting_position + 200 - thickness, starting_y_position + 275 + displacement, width, 125 - displacement * 2))
+walls.push(new wall(starting_position + 200 - thickness, starting_y_position + 150 + displacement, width, 125 - displacement * 2))
+walls.push(new wall(starting_position - thickness, starting_y_position + 275 - thickness, 200 + width, width))
+walls.push(new wall(starting_position - thickness, starting_y_position + 275 + displacement, 200 + width, width))
+walls.push(new wall(starting_position - thickness, starting_y_position + 275 - displacement, width, thickness + displacement))
+
 
 for (let node of nodes){
     try {
@@ -432,7 +439,6 @@ function draw(){
             ctx.fillText("1", canvas.width/2, canvas.height/2)
         }
         else {
-            console.log(player.x, player.y)
             ctx.beginPath()
             try {
                 player_move()
