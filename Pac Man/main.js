@@ -215,15 +215,23 @@ walls.push(new wall(starting_position + 250 + displacement, starting_y_position 
 walls.push(new wall(starting_position + 550 - thickness, starting_y_position + 400 + displacement, width, 75 - displacement * 2))
 walls.push(new wall(starting_position + 250 + displacement, starting_y_position + 475 - thickness, 300 - displacement * 2, width))
 
-walls.push(new wall(starting_position + 715 - displacement, starting_y_position + 325 + displacement, width, 150 - displacement * 2))
+walls.push(new wall(starting_position + 715 - displacement, starting_y_position + 325 + displacement, width, 150 - displacement * 2)) //more middle bottom
 walls.push(new wall(starting_position + 375 + displacement, starting_y_position + 325 + displacement, 335 - thickness, width)) 
 walls.push(new wall(starting_position + 550 + displacement, starting_y_position + 475 - thickness, 175 - displacement * 2, width))
 walls.push(new wall(starting_position + 550 + displacement, starting_y_position + 400 - displacement, width, 75 - width))
 walls.push(new wall(starting_position + 375 + displacement, starting_y_position + 400 - thickness, 175 + width, width)) 
 walls.push(new wall(starting_position + 375 + displacement, starting_y_position + 325 + displacement, width, displacement)) 
 
+var ghost_wall = new wall(starting_position + 375 + displacement, starting_y_position + 100 + displacement, 190 - displacement * 2, width) //Red wall
+walls.push(ghost_wall)
 
+walls.push(new wall(starting_position + 375 + displacement, starting_y_position + 100 + displacement, width, 225 - displacement * 2)) //Ghost Cage
+walls.push(new wall(starting_position + 375 + displacement, starting_y_position + 325 - thickness, 350 - displacement * 2, width))
+walls.push(new wall(starting_position + 725 - thickness, starting_y_position + 200 + displacement, width, 125 - displacement * 2))
+walls.push(new wall(starting_position + 565 - thickness, starting_y_position + 200 + displacement, 160 + width, width))
+walls.push(new wall(starting_position + 565 - thickness, starting_y_position + 100 + displacement, width, 100))
 
+ 
 
 for (let node of nodes){
     try {
@@ -489,7 +497,6 @@ function draw(){
             ctx.fillText("1", canvas.width/2, canvas.height/2)
         }
         else {
-            console.log(player.x, player.y)
             ctx.beginPath()
             try {
                 player_move()
@@ -509,12 +516,19 @@ function draw(){
                     keyBeingPressed = "up"
                 }
             }
-            for (let node of nodes){
-                ctx.fillRect(node.x, node.y, 1, 1)
-            }
+            // for (let node of nodes){
+            //     ctx.fillRect(node.x, node.y, 1, 1)
+            // }
             ctx.fillStyle = "#0000FF"
             for (let wall of walls){
-                wall.draw()
+                if (wall != ghost_wall){
+                    wall.draw()
+                }
+                else {
+                    ctx.fillStyle = "#FF0000"
+                    wall.draw()
+                    ctx.fillStyle = "#0000FF"
+                }
             }
             player.draw()
             if (!hasStarted){
