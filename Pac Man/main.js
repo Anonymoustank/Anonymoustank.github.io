@@ -9,6 +9,7 @@ document.addEventListener("keydown", keyDownHandler, false);
 var speed = 5;
 var nodes = new Set()
 var walls = []
+var ghost_list = []
 var starting_position = 300
 var starting_y_position = 100
 var cooldown = performance.now()
@@ -231,8 +232,6 @@ walls.push(new wall(starting_position + 725 - thickness, starting_y_position + 2
 walls.push(new wall(starting_position + 565 - thickness, starting_y_position + 200 + displacement, 160 + width, width))
 walls.push(new wall(starting_position + 565 - thickness, starting_y_position + 100 + displacement, width, 100))
 
- 
-
 for (let node of nodes){
     try {
         eval('var test_node1 = node' + (node.x + 5) + node.y)
@@ -311,9 +310,11 @@ class GIF extends GameObject{
         else {
             for (let i = 0; i < list.length; i++){
                 for (let j = 0; j < list.length; j++){
-                    var image = new Image()
-                    image.src = list[i][j]
-                    list[i][j] = image
+                    if (list[i][j] != undefined){
+                        var image = new Image()
+                        image.src = list[i][j]
+                        list[i][j] = image
+                    }
                 }
             }
         }
@@ -370,10 +371,38 @@ class GIF extends GameObject{
     
 }
 
+function has_collided(object1 = player, object2 = red_ghost){
+    let x1 = object1.x
+    let y1 = object1.y
+    let width1 = 42
+    let height1 = 45
+
+    let x2 = object2.x
+    let y2 = object2.y
+    let width2 = 38
+    let height2 = 38
+
+    if(x1 < x2 + width2 &&
+        x1 + width1 > x2 &&
+        y1 < y2 + height2 &&
+        y1 + height1 > y2)
+    {
+        return true
+    }
+    else {
+        return false
+    }
+    
+}
+
+
 var player = new GIF(starting_position, starting_y_position, [["Images/PlayerUP - 1.png", "Images/PlayerUP - 2.png"], ["Images/PlayerRIGHT - 1.png", "Images/PlayerRIGHT - 2.png"], ["Images/PlayerLEFT - 1.png", "Images/PlayerLEFT - 2.png"], ["Images/PlayerDOWN - 1.png", "Images/PlayerDOWN - 2.png"]], 4)
 var pac_man_circle = new GameObject(player.x, player.y, "Images/Circle.png")
-
 player.lives = 3
+
+var red_ghost = new GIF(starting_position + 900, starting_y_position + 500, [["Images/1.png", "Images/2.png"], ["Images/3.png", "Images/4.png"], ["Images/5.png", "Images/6.png"], ["Images/7.png", "Images/8.png"]], 4)
+red_ghost.previous_node = null
+ghost_list.push(red_ghost)
 
 function player_move(){
     try {
@@ -444,13 +473,13 @@ function player_move(){
 function pathfind(node, target, list, already_visited){
     list.push(node)
     already_visited.add(node)
-    var current_node = node
+    let current_node = node
     while (current_node != target){
         let amt_of_nodes = 0
-        for(let next_node of current_node.connecting_nodes){
+        for (let next_node of current_node.connecting_nodes){
             if (next_node == target){
                 list.push(next_node)
-                return;
+                return [...list]
             }
             else if (!already_visited.has(next_node)){
                 current_node = next_node
@@ -459,6 +488,9 @@ function pathfind(node, target, list, already_visited){
                 amt_of_nodes += 1
                 break
             }
+        }
+        if (amt_of_nodes == 0 && current_node == node){
+            return []
         }
         if (amt_of_nodes == 0){
             if (current_node != node){
@@ -470,8 +502,8 @@ function pathfind(node, target, list, already_visited){
 }
 
 test_list = []
-already_visited = new Set()
-pathfind(node705650, node600370, test_list, already_visited)
+already_visited = new Set([node500375, node500370])
+console.log(pathfind(node495375, node300375, test_list, already_visited))
 
 function draw(){
     if (!running){
@@ -529,6 +561,47 @@ function draw(){
                     wall.draw()
                     ctx.fillStyle = "#0000FF"
                 }
+            }
+            for (let ghost of ghost_list){
+                if (has_collided(player, ghost)){
+                    // console.log("Game Over")
+                }
+                ghost.draw()
+                if (ghost.x != player.x || ghost.y != player.y){
+                    eval("var ghost_node = node" + ghost.x + ghost.y)
+                    eval("var player_node = node" + player.x + player.y)
+                    let shortest_path = []
+                    let counter = 0
+                    for (let node of ghost_node.connecting_nodes){ //find node that offers closest path to player
+                        if (node == player_node){
+                            ghost.x = player.x
+                            ghost.y = player.y
+                            break
+                        }
+                        else if (node != ghost.previous_node){
+                            test_list.splice(0, test_list.length)
+                            already_visited.clear()
+                            if (ghost.previous_node != null){
+                                already_visited.add(ghost.previous_node)//can't double back to go to ghost's previous position
+                            }
+                            already_visited.add(ghost_node) //can't double back to go to ghost's current position
+                            let path = pathfind(node, player_node, test_list, already_visited)
+                            if (shortest_path.length == 0 || (shortest_path.length > path.length && path.length != 0)){
+                                shortest_path = path
+                            }
+                        }
+                    }
+                    for (let node of shortest_path){
+                        if (node != ghost.previous_node && node != ghost_node){
+                            ghost.x = node.x
+                            ghost.y = node.y
+                            break
+                        }
+                    }
+                    if (ghost.previous_node != ghost_node){
+                        ghost.previous_node = ghost_node 
+                    }
+                }    
             }
             player.draw()
             if (!hasStarted){
