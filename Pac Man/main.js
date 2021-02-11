@@ -400,7 +400,7 @@ var player = new GIF(starting_position, starting_y_position, [["Images/PlayerUP 
 var pac_man_circle = new GameObject(player.x, player.y, "Images/Circle.png")
 player.lives = 3
 
-var red_ghost = new GIF(starting_position + 900, starting_y_position + 500, [["Images/1.png", "Images/2.png"], ["Images/3.png", "Images/4.png"], ["Images/5.png", "Images/6.png"], ["Images/7.png", "Images/8.png"]], 4)
+var red_ghost = new GIF(starting_position + 500, starting_y_position + 100, [["Images/1.png", "Images/2.png"], ["Images/3.png", "Images/4.png"], ["Images/5.png", "Images/6.png"], ["Images/7.png", "Images/8.png"]], 4)
 red_ghost.previous_node = null
 ghost_list.push(red_ghost)
 
@@ -470,7 +470,7 @@ function player_move(){
     }
 }
 
-function pathfind(node, target, list, already_visited){
+function pathfind_dfs(node, target, list, already_visited){
     list.push(node)
     already_visited.add(node)
     let current_node = node
@@ -501,9 +501,75 @@ function pathfind(node, target, list, already_visited){
     }
 }
 
-test_list = []
-already_visited = new Set([node500375, node500370])
-console.log(pathfind(node495375, node300375, test_list, already_visited))
+function pathfind_bfs(node, target, list, already_visited){
+    let current_node = node
+    list.push([node])
+    while (list.length > 0){
+        let path = list.shift()
+        current_node = path[path.length - 1]
+        if (!already_visited.has(current_node)){
+            already_visited.add(current_node)
+            for (let next_node of current_node.connecting_nodes){
+                if (!already_visited.has(next_node)){
+                    let new_path = path
+                    new_path.push(next_node)
+                    list.push(new_path)
+                    if (next_node == target){
+                        return new_path
+                    }
+                }
+            }
+        }
+    }
+    return []
+}
+
+node_list = []
+already_visited = new Set()
+
+function move_ghost(ghost){
+    if (ghost.x != player.x || ghost.y != player.y){
+        eval("var ghost_node = node" + ghost.x + ghost.y)
+        eval("var player_node = node" + player.x + player.y)
+        let shortest_path = []
+        for (let node of ghost_node.connecting_nodes){ //find node that offers closest path to player
+            if (node == player_node){
+                ghost.x = player.x
+                ghost.y = player.y
+                break
+            }
+            else if (node != ghost.previous_node){
+                node_list.splice(0, node_list.length)
+                already_visited.clear()
+                if (ghost.previous_node != null){
+                    already_visited.add(ghost.previous_node)//can't double back to go to ghost's previous position
+                }
+                already_visited.add(ghost_node) //can't double back to go to ghost's current position
+                let path = pathfind_bfs(node, player_node, node_list, already_visited)
+                if (shortest_path.length == 0 || (shortest_path.length > path.length && path.length != 0)){
+                    shortest_path = path
+                }
+            }
+        }
+        if (shortest_path.length == 0){
+            ghost.previous_node = null
+            move_ghost(ghost)
+        }
+        else {
+            for (let node of shortest_path){
+                if (node != ghost.previous_node && node != ghost_node){
+                    ghost.x = node.x
+                    ghost.y = node.y
+                    break
+                }
+            }
+            if (ghost.previous_node != ghost_node){
+                ghost.previous_node = ghost_node 
+            }
+        }
+    }
+
+}
 
 function draw(){
     if (!running){
@@ -564,48 +630,17 @@ function draw(){
             }
             for (let ghost of ghost_list){
                 if (has_collided(player, ghost)){
-                    // console.log("Game Over")
+                    console.log("Game Over")
                 }
                 ghost.draw()
-                if (ghost.x != player.x || ghost.y != player.y){
-                    eval("var ghost_node = node" + ghost.x + ghost.y)
-                    eval("var player_node = node" + player.x + player.y)
-                    let shortest_path = []
-                    let counter = 0
-                    for (let node of ghost_node.connecting_nodes){ //find node that offers closest path to player
-                        if (node == player_node){
-                            ghost.x = player.x
-                            ghost.y = player.y
-                            break
-                        }
-                        else if (node != ghost.previous_node){
-                            test_list.splice(0, test_list.length)
-                            already_visited.clear()
-                            if (ghost.previous_node != null){
-                                already_visited.add(ghost.previous_node)//can't double back to go to ghost's previous position
-                            }
-                            already_visited.add(ghost_node) //can't double back to go to ghost's current position
-                            let path = pathfind(node, player_node, test_list, already_visited)
-                            if (shortest_path.length == 0 || (shortest_path.length > path.length && path.length != 0)){
-                                shortest_path = path
-                            }
-                        }
-                    }
-                    for (let node of shortest_path){
-                        if (node != ghost.previous_node && node != ghost_node){
-                            ghost.x = node.x
-                            ghost.y = node.y
-                            break
-                        }
-                    }
-                    if (ghost.previous_node != ghost_node){
-                        ghost.previous_node = ghost_node 
-                    }
-                }    
+                move_ghost(ghost)
             }
-            player.draw()
+            
             if (!hasStarted){
                 pac_man_circle.draw()
+            }
+            else {
+                player.draw()
             }
             ctx.fill()
             ctx.closePath()
