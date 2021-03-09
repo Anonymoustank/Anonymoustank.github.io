@@ -158,6 +158,10 @@ function keyUpHandler(e) {
 
 function draw_items(){
     ctx.beginPath();
+    ctx.fillStyle = "#008000";
+    for (let bar in bottom_bar_list){
+        ctx.fillRect(bottom_bar_list[bar][0], bottom_bar_list[bar][1], bottom_bar_list[bar][2], bottom_bar_list[bar][3])
+    }
     var random_num = randomNumber(1, 500)
     if (random_num == 3 && ufo_present == false && performance.now() - time_since_ufo >= 7500){
         time_since_ufo = performance.now()
@@ -331,10 +335,6 @@ function draw_items(){
         else{
             bullet_list.splice(i, 1)
         }
-    }
-    ctx.fillStyle = "#008000";
-    for (let bar in bottom_bar_list){
-        ctx.fillRect(bottom_bar_list[bar][0], bottom_bar_list[bar][1], bottom_bar_list[bar][2], bottom_bar_list[bar][3])
     }
     for (let i in enemy_bullet_list){
         for (let triangle in triangle_list){
