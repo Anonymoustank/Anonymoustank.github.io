@@ -142,28 +142,34 @@ function pathfind_dfs(node, target, list, already_visited, modified_path){
 
 //bfs was too performance intensive
 
-// function pathfind_bfs(node, target, list, already_visited){ 
-//     let current_node = node
-//     list.push([node])
-//     while (list.length > 0){
-//         let path = list.shift()
-//         current_node = path[path.length - 1]
-//         if (!already_visited.has(current_node)){
-//             for (let next_node of current_node.connecting_nodes){
-//                 if (!already_visited.has(next_node)){
-//                     let new_path = path
-//                     new_path.push(next_node)
-//                     if (next_node == target){
-//                         return new_path
-//                     }
-//                     list.push(new_path)
-//                 }
-//             }
-//             already_visited.add(current_node)
-//         }
-//     }
-//     return []
-// }
+function pathfind_bfs(node, target, list, already_visited, modified_path){ 
+    let current_node = node
+    list.push([node])
+    while (list.length > 0){
+        let path = list.shift()
+        current_node = path[path.length - 1]
+        if (!already_visited.has(current_node)){
+            if (modified_path) {
+                connecting_nodes = current_node.connecting_nodes
+            }
+            else {
+                connecting_nodes = current_node.connecting_nodes.reverse()
+            }
+            for (let next_node of connecting_nodes){
+                if (!already_visited.has(next_node)){
+                    let new_path = [...path]
+                    new_path.push(next_node)
+                    if (next_node == target){
+                        return new_path
+                    }
+                    list.push(new_path)
+                }
+            }
+            already_visited.add(current_node)
+        }
+    }
+    return []
+}
 
 node_list = []
 already_visited = new Set()
@@ -190,8 +196,14 @@ function move_ghost(ghost, target){
                 if (ghost == red_ghost){
                     path = pathfind_dfs(node, target_node, node_list, already_visited, false)
                 }
-                else if (ghost == cyan_ghost){
+                else if (ghost == orange_ghost){
                     path = pathfind_dfs(node, target_node, node_list, already_visited, true)
+                }
+                else if (ghost == cyan_ghost){
+                    path = pathfind_bfs(node, target_node, node_list, already_visited, false)
+                }
+                else if (ghost == pink_ghost){
+                    path = pathfind_bfs(node, target_node, node_list, already_visited, true)
                 }
                 if (shortest_path.length == 0 || (shortest_path.length > path.length && path.length != 0)){
                     shortest_path = path
@@ -302,6 +314,8 @@ function draw(){
                     ctx.fillStyle = "#0000FF"
                 }
             }
+
+            console.log(player.x, player.y)
             
             for (let ghost of ghost_list){
                 if (ghost.previous_node == null || ghost.previous_node.y - ghost.y > 0){
