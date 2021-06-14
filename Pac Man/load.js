@@ -339,12 +339,16 @@ for (let node of nodes){
 
 var red_ghost = new GIF(starting_position + 500, starting_y_position + 100, [["Images/1.png", "Images/2.png"], ["Images/3.png", "Images/4.png"], ["Images/5.png", "Images/6.png"], ["Images/7.png", "Images/8.png"]], 4)
 red_ghost.previous_node = null
+// red_ghost.scatter_node = (starting_position + 900, starting_y_position)
+red_ghost.scatter_node = node1200100
 ghost_list.push(red_ghost)
 
 var player = new GIF(starting_position, starting_y_position, [["Images/PlayerUP - 1.png", "Images/PlayerUP - 2.png"], ["Images/PlayerRIGHT - 1.png", "Images/PlayerRIGHT - 2.png"], ["Images/PlayerLEFT - 1.png", "Images/PlayerLEFT - 2.png"], ["Images/PlayerDOWN - 1.png", "Images/PlayerDOWN - 2.png"]], 4)
 var pac_man_circle = new GameObject(player.x, player.y, "Images/Circle.png")
 player.lives = 3
 
-// var cyan_ghost = new GIF(starting_position + 500, starting_y_position + 100, [["Images/9.png", "Images/10.png"], ["Images/11.png", "Images/12.png"], ["Images/13.png", "Images/14.png"], ["Images/15.png", "Images/16.png"]], 4)
-// cyan_ghost.previous_node = null
-// ghost_list.push(cyan_ghost)
+var cyan_ghost = new GIF(starting_position + 490, starting_y_position + 100, [["Images/9.png", "Images/10.png"], ["Images/11.png", "Images/12.png"], ["Images/13.png", "Images/14.png"], ["Images/15.png", "Images/16.png"]], 4)
+cyan_ghost.previous_node = null
+// cyan_ghost.scatter_node = (starting_position + 900, starting_y_position + 550)
+cyan_ghost.scatter_node = node1200650
+ghost_list.push(cyan_ghost)

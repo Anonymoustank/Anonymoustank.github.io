@@ -10,6 +10,7 @@ var speed = 5;
 var cooldown = performance.now()
 var start_timer = performance.now()
 var first_loop = true
+var scatter_mode = true
 var start_audio = new Audio('Audio/pacman_beginning.wav')
 start_audio.volume = 0.25
 
@@ -100,13 +101,20 @@ function player_move(){
     }
 }
 
-function pathfind_dfs(node, target, list, already_visited){
+function pathfind_dfs(node, target, list, already_visited, modified_path){
     list.push(node)
     already_visited.add(node)
     let current_node = node
     while (current_node != target){
         let amt_of_nodes = 0
-        for (let next_node of current_node.connecting_nodes){
+        let connecting_nodes = []
+        if (modified_path) {
+            connecting_nodes = current_node.connecting_nodes
+        }
+        else {
+            connecting_nodes = current_node.connecting_nodes.reverse()
+        }
+        for (let next_node of connecting_nodes){
             if (next_node == target){
                 list.push(next_node)
                 return [...list]
@@ -130,6 +138,7 @@ function pathfind_dfs(node, target, list, already_visited){
         }
     }
 }
+
 //bfs was too performance intensive
 
 // function pathfind_bfs(node, target, list, already_visited){ 
@@ -158,15 +167,15 @@ function pathfind_dfs(node, target, list, already_visited){
 node_list = []
 already_visited = new Set()
 
-function move_ghost(ghost){
-    if (ghost.x != player.x || ghost.y != player.y){
+function move_ghost(ghost, target){
+    if (ghost.x != target.x || ghost.y != target.y){
+        eval("var target_node = node" + target.x + target.y)
         eval("var ghost_node = node" + ghost.x + ghost.y)
-        eval("var player_node = node" + player.x + player.y)
         let shortest_path = []
         for (let node of ghost_node.connecting_nodes){ //find node that offers closest path to player
-            if (node == player_node){
-                ghost.x = player.x
-                ghost.y = player.y
+            if (node == target_node){
+                ghost.x = target.x
+                ghost.y = target.y
                 break
             }
             else if (node != ghost.previous_node){
@@ -178,10 +187,10 @@ function move_ghost(ghost){
                 already_visited.add(ghost_node) //can't double back to go to ghost's current position
                 let path = []
                 if (ghost == red_ghost){
-                    path = pathfind_dfs(node, player_node, node_list, already_visited)
+                    path = pathfind_dfs(node, target_node, node_list, already_visited, false)
                 }
                 else if (ghost == cyan_ghost){
-                    path = pathfind_bfs(node, player_node, node_list, already_visited)
+                    path = pathfind_dfs(node, target_node, node_list, already_visited, true)
                 }
                 if (shortest_path.length == 0 || (shortest_path.length > path.length && path.length != 0)){
                     shortest_path = path
@@ -190,7 +199,7 @@ function move_ghost(ghost){
         }
         if (shortest_path.length == 0){
             ghost.previous_node = null
-            move_ghost(ghost)
+            move_ghost(ghost, target)
         }
         else {
             for (let node of shortest_path){
@@ -204,9 +213,7 @@ function move_ghost(ghost){
                 ghost.previous_node = ghost_node 
             }
         }
-        
     }
-
 }
 
 function draw(){
@@ -266,7 +273,7 @@ function draw(){
                     ctx.fillStyle = "#0000FF"
                 }
             }
-            console.log(player.x, player.y) //(665, 280)
+            
             for (let ghost of ghost_list){
                 if (ghost.previous_node == null || ghost.previous_node.y - ghost.y > 0){
                     ghost.degrees = 0
@@ -281,9 +288,16 @@ function draw(){
                     ghost.degrees = 180
                 }
                 ghost.draw()
-                move_ghost(ghost)
                 if (player.x == ghost.x && player.y == ghost.y){
                     console.log("Game Over")
+                }
+                else {
+                    if (!scatter_mode){
+                        move_ghost(ghost, player)
+                    }
+                    else {
+                        move_ghost(ghost, ghost.scatter_node)
+                    }
                 }
             }
             
@@ -291,6 +305,7 @@ function draw(){
                 pac_man_circle.draw()
             }
             else {
+                console.log(player.x, player.y)
                 player.draw()
             }
             ctx.fill()
