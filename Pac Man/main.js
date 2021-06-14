@@ -10,7 +10,8 @@ var speed = 5;
 var cooldown = performance.now()
 var start_timer = performance.now()
 var first_loop = true
-var scatter_mode = true
+var scatter_mode = false
+var scatter_cooldown = new Date()
 var start_audio = new Audio('Audio/pacman_beginning.wav')
 start_audio.volume = 0.25
 
@@ -259,9 +260,37 @@ function draw(){
                     keyBeingPressed = "up"
                 }
             }
-            // for (let node of nodes){
-            //     ctx.fillRect(node.x, node.y, 1, 1)
-            // }
+
+            for (let coin of coins){
+                if (large_nodes.has(coin)){
+                    ctx.fillStyle = "#FFFF00";
+                    ctx.fillRect(coin.x - 5, coin.y - 5, 10, 10)
+                }
+                else {
+                    ctx.fillStyle = "#eee"
+                    ctx.fillRect(coin.x, coin.y, 1, 1)
+                }
+                
+            }
+            eval("var player_node = node" + player.x + player.y)
+            if (coins.has(player_node)){
+                coins.delete(player_node)
+                if (large_nodes.has(player_node)){
+                    large_nodes.delete(player_node)
+                    scatter_mode = true
+                    scatter_cooldown = new Date()
+                }
+            }
+            if (scatter_mode && new Date() - scatter_cooldown >= 5000) {
+                scatter_mode = false
+            }
+            else if (scatter_mode) {
+                ctx.textAlign = "center"
+                ctx.font = "20px Georgia";
+                let time_left = 5 - Math.round((new Date() - scatter_cooldown)/1000)
+                ctx.fillText("Scatter Mode Ends: " + time_left, canvas.width/2, canvas.height * 0.07)
+            }
+
             ctx.fillStyle = "#0000FF"
             for (let wall of walls){
                 if (wall != ghost_wall){
@@ -289,7 +318,7 @@ function draw(){
                 }
                 ghost.draw()
                 if (player.x == ghost.x && player.y == ghost.y){
-                    console.log("Game Over")
+                    // console.log("Game Over")
                 }
                 else {
                     if (!scatter_mode){
@@ -305,7 +334,6 @@ function draw(){
                 pac_man_circle.draw()
             }
             else {
-                console.log(player.x, player.y)
                 player.draw()
             }
             ctx.fill()

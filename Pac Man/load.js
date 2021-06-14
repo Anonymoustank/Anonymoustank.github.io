@@ -221,6 +221,10 @@ for (let i = starting_position; i <= starting_position + 900; i = i + 5){ //map 
     eval('var node' + i + (starting_y_position + 550) + "= new node(" + i + "," + (starting_y_position + 550) + ")")
     eval('nodes.add(' + "node" + i + (starting_y_position + 550) + ')')
 }
+
+var coins = new Set(nodes)
+var large_nodes = new Set([node300250, node850500, node620370, node1200300])
+
 var width = 10
 var displacement = 22.5
 var thickness = displacement + width
