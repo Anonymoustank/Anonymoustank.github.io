@@ -282,9 +282,17 @@ function draw(){
                 }
                 
             }
+
+            console.log(coins)
+            console.log(player.x, player.y)
+
             eval("var player_node = node" + player.x + player.y)
             if (coins.has(player_node)){
+                if (player_node.x == 300 && player_node.y == 100){
+                    console.log("hello")
+                }
                 coins.delete(player_node)
+
                 if (large_nodes.has(player_node)){
                     large_nodes.delete(player_node)
                     scatter_mode = true
@@ -298,7 +306,7 @@ function draw(){
                 ctx.textAlign = "center"
                 ctx.font = "20px Georgia";
                 let time_left = 4 - Math.round((new Date() - scatter_cooldown)/1000)
-                ctx.fillText("Scatter Mode Ends: " + time_left, canvas.width/2, canvas.height * 0.07)
+                ctx.fillText("Scatter Mode Ends: " + time_left, canvas.width/2, starting_y_position - 50)
             }
 
             ctx.fillStyle = "#0000FF"
@@ -312,8 +320,6 @@ function draw(){
                     ctx.fillStyle = "#0000FF"
                 }
             }
-
-            console.log(player.x, player.y)
             
             for (let ghost of ghost_list){
                 if (ghost.previous_node == null || ghost.previous_node.y - ghost.y > 0){

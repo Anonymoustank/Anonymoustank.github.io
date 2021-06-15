@@ -112,14 +112,13 @@ class GIF extends GameObject{
 
 for (let i = starting_position; i <= starting_position + 900; i = i + 5){ //map generation
     if (i == starting_position + 200){
-        for (let j = starting_y_position; j <= starting_y_position + 400; j = j + 5){
+        for (let j = starting_y_position + 5; j < starting_y_position + 400; j = j + 5){
             eval('var node' + i + j + "= new node(" + i + "," + j + ")")
             eval('nodes.add(' + "node" + i + j + ')')
-            // nodes.push(new node(i, j))
         }
     }
     else if (i == starting_position + 250){
-        for (let j = starting_y_position + 550; j >= starting_y_position + 400; j = j - 5){
+        for (let j = starting_y_position + 545; j > starting_y_position + 400; j = j - 5){
             eval('var node' + i + j + "= new node(" + i + "," + j + ")")
             eval('nodes.add(' + "node" + i + j + ')')
         }
@@ -129,19 +128,19 @@ for (let i = starting_position; i <= starting_position + 900; i = i + 5){ //map 
             eval('var node' + i + j + "= new node(" + i + "," + j + ")")
             eval('nodes.add(' + "node" + i + j + ')')
         }
-        for (let j = starting_y_position + 550; j >= starting_y_position + 400; j = j - 5){
+        for (let j = starting_y_position + 550; j > starting_y_position + 400; j = j - 5){
             eval('var node' + i + j + "= new node(" + i + "," + j + ")")
             eval('nodes.add(' + "node" + i + j + ')')
         }
     }
     else if (i == starting_position + 375){
-        for (let j = starting_y_position; j <= starting_y_position + 400; j = j + 5){
+        for (let j = starting_y_position + 5; j < starting_y_position + 400; j = j + 5){
             eval('var node' + i + j + "= new node(" + i + "," + j + ")")
             eval('nodes.add(' + "node" + i + j + ')')
         }
     }
     else if (i == starting_position + 285){
-        for (let j = starting_y_position + 180; j <= starting_y_position + 270; j = j + 5){
+        for (let j = starting_y_position + 185; j < starting_y_position + 270; j = j + 5){
             eval('var node' + i + j + "= new node(" + i + "," + j + ")")
             eval('nodes.add(' + "node" + i + j + ')')
         }
@@ -151,7 +150,7 @@ for (let i = starting_position; i <= starting_position + 900; i = i + 5){ //map 
         eval('var node' + i + j + "= new node(" + i + "," + j + ")")
         eval('nodes.add(' + "node" + i + j + ')')
     }
-    if (i <= starting_position + 375 && i >= starting_position + 285){
+    if (i < starting_position + 375 && i >= starting_position + 285){
         let j = starting_y_position + 180
         eval('var node' + i + j + "= new node(" + i + "," + j + ")")
         eval('nodes.add(' + "node" + i + j + ')')
@@ -162,23 +161,25 @@ for (let i = starting_position; i <= starting_position + 900; i = i + 5){ //map 
         eval('nodes.add(' + "node" + i + j + ')')
     }
     else if (i == starting_position + 550){
-        for (let j = starting_y_position + 400; j <= starting_y_position + 475; j = j + 5){
+        for (let j = starting_y_position + 400; j < starting_y_position + 475; j = j + 5){
             eval('var node' + i + j + "= new node(" + i + "," + j + ")")
             eval('nodes.add(' + "node" + i + j + ')')
         }
     }
-    if (i >= starting_position + 250 && i < starting_position + 725){
+    if (i > starting_position + 250 && i < starting_position + 725){
         let j = starting_y_position + 475
         eval('var node' + i + j + "= new node(" + i + "," + j + ")")
         eval('nodes.add(' + "node" + i + j + ')')
     }
     else if (i == starting_position + 725){
-        for (let j = starting_y_position + 475; j >= starting_y_position; j = j - 5){
-            eval('var node' + i + j + "= new node(" + i + "," + j + ")")
-            eval('nodes.add(' + "node" + i + j + ')')
+        for (let j = starting_y_position + 475; j > starting_y_position; j = j - 5){
+            if (j != starting_y_position + 200 && j != starting_y_position + 325) {
+                eval('var node' + i + j + "= new node(" + i + "," + j + ")")
+                eval('nodes.add(' + "node" + i + j + ')')
+            }
         }
     }
-    if (i >= starting_position + 375 && i < starting_position + 565){
+    if (i > starting_position + 375 && i < starting_position + 565){
         let j = starting_y_position + 100
         eval('var node' + i + j + "= new node(" + i + "," + j + ")")
         eval('nodes.add(' + "node" + i + j + ')')
@@ -194,15 +195,15 @@ for (let i = starting_position; i <= starting_position + 900; i = i + 5){ //map 
         eval('var node' + i + j + "= new node(" + i + "," + j + ")")
         eval('nodes.add(' + "node" + i + j + ')')
     }
-    if (i <= starting_position + 200){
-        let j = starting_y_position + 150
+    if (i <= starting_position + 195){
+        let j = starting_y_position + 155
         eval('var node' + i + j + "= new node(" + i + "," + j + ")")
         eval('nodes.add(' + "node" + i + j + ')')
-        j = starting_y_position + 275
+        j = starting_y_position + 280
         eval('var node' + i + j + "= new node(" + i + "," + j + ")")
         eval('nodes.add(' + "node" + i + j + ')')
     }
-    if (i >= starting_position + 375){
+    if (i > starting_position + 375 && i < starting_position + 900){
         let j = starting_y_position + 325
         eval('var node' + i + j + "= new node(" + i + "," + j + ")")
         eval('nodes.add(' + "node" + i + j + ')')
@@ -213,17 +214,13 @@ for (let i = starting_position; i <= starting_position + 900; i = i + 5){ //map 
             eval('nodes.add(' + "node" + i + j + ')')
         }
     }
-
-    // nodes.push(new node(i, starting_y_position))
-    eval('var node' + i + starting_y_position + "= new node(" + i + "," + starting_y_position + ")")
-    eval('nodes.add(' + "node" + i + starting_y_position + ')')
-    // nodes.push(new node(i, starting_y_position + 550))
-    eval('var node' + i + (starting_y_position + 550) + "= new node(" + i + "," + (starting_y_position + 550) + ")")
-    eval('nodes.add(' + "node" + i + (starting_y_position + 550) + ')')
+    if (i >= starting_position + 5 && i <= starting_position + 895) {
+        eval('var node' + i + starting_y_position + "= new node(" + i + "," + starting_y_position + ")")
+        eval('nodes.add(' + "node" + i + starting_y_position + ')')
+        eval('var node' + i + (starting_y_position + 550) + "= new node(" + i + "," + (starting_y_position + 550) + ")")
+        eval('nodes.add(' + "node" + i + (starting_y_position + 550) + ')')
+    }
 }
-
-var coins = new Set(nodes)
-var large_nodes = new Set([node300250, node850500, node620370, node1200300])
 
 var width = 10
 var displacement = 22.5
@@ -340,6 +337,9 @@ for (let node of nodes){
     }
     catch (e){}
 }
+
+var coins = new Set(nodes)
+var large_nodes = new Set([node300250, node850500, node620370, node1200300])
 
 var red_ghost = new GIF(starting_position + 500, starting_y_position + 100, [["Images/1.png", "Images/2.png"], ["Images/3.png", "Images/4.png"], ["Images/5.png", "Images/6.png"], ["Images/7.png", "Images/8.png"]], 4)
 red_ghost.previous_node = null
