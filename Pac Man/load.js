@@ -198,9 +198,9 @@ for (let i = starting_position; i <= starting_position + 900; i = i + 5){ //map 
         let j = starting_y_position + 150
         eval('var node' + i + j + "= new node(" + i + "," + j + ")")
         eval('nodes.add(' + "node" + i + j + ')')
-        // j = starting_y_position + 275
-        // eval('var node' + i + j + "= new node(" + i + "," + j + ")")
-        // eval('nodes.add(' + "node" + i + j + ')')
+        j = starting_y_position + 275
+        eval('var node' + i + j + "= new node(" + i + "," + j + ")")
+        eval('nodes.add(' + "node" + i + j + ')')
     }
     if (i >= starting_position + 375){
         let j = starting_y_position + 325
@@ -249,9 +249,9 @@ walls.push(new wall(starting_position + displacement, starting_y_position + 550 
 walls.push(new wall(starting_position + 200 + displacement, starting_y_position + displacement, width, 300 + displacement * 2 + width)) //middle left
 walls.push(new wall(starting_position + 200 - thickness, starting_y_position + 275 + displacement, width, 125 - displacement * 2))
 walls.push(new wall(starting_position + 200 - thickness, starting_y_position + 150 + displacement, width, 125 - displacement * 2))
-// walls.push(new wall(starting_position - thickness, starting_y_position + 275 - thickness, 200 + width, width))
-// walls.push(new wall(starting_position - thickness, starting_y_position + 275 + displacement, 200 + width, width))
-walls.push(new wall(starting_position + 200 - thickness, starting_y_position + 275 - displacement, width, thickness + displacement))
+walls.push(new wall(starting_position - thickness, starting_y_position + 275 - thickness, 200 + width, width))
+walls.push(new wall(starting_position - thickness, starting_y_position + 275 + displacement, 200 + width, width))
+walls.push(new wall(starting_position - thickness, starting_y_position + 275 - displacement, width, thickness + displacement))
 
 walls.push(new wall(starting_position + 200 + thickness, starting_y_position + displacement, 175 - thickness * 2, width)) //middle
 walls.push(new wall(starting_position + 200 + thickness, starting_y_position + 400 - thickness, 175 - thickness * 2, width))

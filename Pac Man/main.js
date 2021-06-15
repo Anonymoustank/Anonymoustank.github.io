@@ -140,8 +140,6 @@ function pathfind_dfs(node, target, list, already_visited, modified_path){
     }
 }
 
-//bfs was too performance intensive
-
 function pathfind_bfs(node, target, list, already_visited, modified_path){ 
     let current_node = node
     list.push([node])
@@ -293,13 +291,13 @@ function draw(){
                     scatter_cooldown = new Date()
                 }
             }
-            if (scatter_mode && new Date() - scatter_cooldown >= 5000) {
+            if (scatter_mode && new Date() - scatter_cooldown >= 4000) {
                 scatter_mode = false
             }
             else if (scatter_mode) {
                 ctx.textAlign = "center"
                 ctx.font = "20px Georgia";
-                let time_left = 5 - Math.round((new Date() - scatter_cooldown)/1000)
+                let time_left = 4 - Math.round((new Date() - scatter_cooldown)/1000)
                 ctx.fillText("Scatter Mode Ends: " + time_left, canvas.width/2, canvas.height * 0.07)
             }
 
