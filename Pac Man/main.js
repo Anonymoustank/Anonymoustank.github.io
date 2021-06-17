@@ -5,6 +5,7 @@ var ctx = canvas.getContext("2d");
 var dead = false;
 var keyBeingPressed = false
 var hasStarted = false
+var won = false
 document.addEventListener("keydown", keyDownHandler, false);
 var speed = 5;
 var lives = 0;
@@ -18,6 +19,8 @@ var start_audio = new Audio('Audio/pacman_beginning.wav')
 var waka = new Audio('Audio/waka.wav')
 var eat_fruit = new Audio('Audio/fruit.wav')
 var death = new Audio('Audio/death.wav')
+var victory = new Audio('Audio/Victory.m4a')
+victory.volume = 0.25
 death.volume = 0.25
 eat_fruit.volume = 0.25
 waka.volume = 0.25
@@ -303,7 +306,7 @@ function draw(){
         else if (performance.now() - start_timer <= Math.floor((start_audio.duration * 1000))){
             ctx.fillText("1", canvas.width/2, canvas.height/2)
         }
-        else if (!dead) {
+        else if (!dead && !won) {
             ctx.beginPath()
             try {
                 player_move()
@@ -337,6 +340,14 @@ function draw(){
                 }
                 
             }
+
+            if (coins.size == 0){
+                won = true
+                waka.pause()
+                waka.currentTime = 0
+                victory.play()
+            }
+
             eval("var player_node = node" + player.x + player.y)
 
             if (player_node == cherry_node && !fruit_eaten) {
@@ -418,11 +429,13 @@ function draw(){
             ctx.fill()
             ctx.closePath()
         }
-        else {
+        else if (!dead && won){
             ctx.beginPath()
-            ctx.textAlign = "center"
-            ctx.font = "60px Georgia";
-
+            ctx.fillText("Victory!", canvas.width/2, canvas.height/2)
+            ctx.closePath()
+        }
+        else if (dead && !won) {
+            ctx.beginPath()
             ctx.fillText("You died", canvas.width/2, canvas.height/2)
             ctx.closePath()
         }
