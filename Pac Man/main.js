@@ -13,9 +13,12 @@ var start_timer = performance.now()
 var first_loop = true
 var scatter_mode = false
 var scatter_cooldown = new Date()
+var fruit_eaten = false
 var start_audio = new Audio('Audio/pacman_beginning.wav')
 var waka = new Audio('Audio/waka.wav')
 var eat_fruit = new Audio('Audio/fruit.wav')
+var death = new Audio('Audio/death.wav')
+death.volume = 0.25
 eat_fruit.volume = 0.25
 waka.volume = 0.25
 start_audio.volume = 0.25
@@ -247,15 +250,31 @@ function orient_ghost(ghost_list){
             ghost_list[i].degrees = 180
         }
         ghost_list[i].draw()
-        if (player.x == ghost_list[i].x && player.y == ghost_list[i].y && !scatter_mode){
-            // console.log("Game Over")
+        if (!scatter_mode){
+            move_ghost(ghost_list[i], player, i)
         }
         else {
-            if (!scatter_mode){
-                move_ghost(ghost_list[i], player, i)
+            move_ghost(ghost_list[i], ghost_list[i].scatter_node, i)
+        }
+        if (player.x == ghost_list[i].x && player.y == ghost_list[i].y && !scatter_mode){
+            waka.pause()
+            waka.currentTime = 0
+            death.play()
+            if (lives > 0){
+                start_timer = performance.now() - 2000
+                for (let ghost of ghost_list){
+                    ghost.x = ghost.original_location_x
+                    ghost.y = ghost.original_location_y
+                }
+                player.x = player.original_location_x
+                player.y = player.original_location_y
+                player.degrees = 270
+                keyBeingPressed = "left"
+                hasStarted = false
+                lives -= 1
             }
             else {
-                move_ghost(ghost_list[i], ghost_list[i].scatter_node, i)
+                dead = true
             }
         }
     }
@@ -284,7 +303,7 @@ function draw(){
         else if (performance.now() - start_timer <= Math.floor((start_audio.duration * 1000))){
             ctx.fillText("1", canvas.width/2, canvas.height/2)
         }
-        else {
+        else if (!dead) {
             ctx.beginPath()
             try {
                 player_move()
@@ -297,7 +316,7 @@ function draw(){
                     keyBeingPressed = "right"
                 }
                 else if (player.degrees == 270){
-                keyBeingPressed = "left"
+                    keyBeingPressed = "left"
                 }
                 else if (player.degrees == 180){
                     keyBeingPressed = "down"
@@ -320,18 +339,18 @@ function draw(){
             }
             eval("var player_node = node" + player.x + player.y)
 
-            if (player_node == cherry_node && lives == 0) {
+            if (player_node == cherry_node && !fruit_eaten) {
                 lives += 1
                 eat_fruit.play()
+                fruit_eaten = true
             }
-            else if (lives == 0) {
+            else if (!fruit_eaten) {
                 cherry.draw()
             }
 
             
             if (coins.has(player_node)){
                 coins.delete(player_node)
-
                 if (large_nodes.has(player_node)){
                     large_nodes.delete(player_node)
                     scatter_mode = true
@@ -390,7 +409,6 @@ function draw(){
                 orient_ghost(ghost_list)
             }
             
-            
             if (!hasStarted){
                 pac_man_circle.draw()
             }
@@ -398,6 +416,14 @@ function draw(){
                 player.draw()
             }
             ctx.fill()
+            ctx.closePath()
+        }
+        else {
+            ctx.beginPath()
+            ctx.textAlign = "center"
+            ctx.font = "60px Georgia";
+
+            ctx.fillText("You died", canvas.width/2, canvas.height/2)
             ctx.closePath()
         }
     }

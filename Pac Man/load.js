@@ -39,6 +39,8 @@ class GameObject {
 class GIF extends GameObject{
     constructor(x, y, list, amt_of_lists = 1){
         super(x, y, null)
+        this.original_location_x = x
+        this.original_location_y = y
         this.image_list = list
         if (amt_of_lists == 1){
             for (let i = 0; i < list.length; i++){
@@ -354,7 +356,6 @@ var cyan_ghost = new GIF(starting_position + 450, starting_y_position + 100, [["
 cyan_ghost.previous_node = null
 cyan_ghost.scatter_node = node1200650
 ghost_list.push(cyan_ghost)
-
 
 var orange_ghost = new GIF(starting_position + 470, starting_y_position + 100, [["Images/23.png", "Images/24.png"], ["Images/19.png", "Images/20.png"], ["Images/31.png", "Images/32.png"], ["Images/21.png", "Images/22.png"]], 4)
 orange_ghost.previous_node = null
