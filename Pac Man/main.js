@@ -13,6 +13,8 @@ var first_loop = true
 var scatter_mode = false
 var scatter_cooldown = new Date()
 var start_audio = new Audio('Audio/pacman_beginning.wav')
+var waka = new Audio('Audio/waka.wav')
+waka.volume = 0.25
 start_audio.volume = 0.25
 
 function keyDownHandler(e) {
@@ -283,6 +285,8 @@ function draw(){
             ctx.beginPath()
             try {
                 player_move()
+                waka.play()
+                waka.loop = true
             }
             catch (error){}
             if (performance.now() - cooldown > 250){
