@@ -366,3 +366,20 @@ pink_ghost.previous_node = null
 pink_ghost.scatter_node = node300100
 ghost_list.push(pink_ghost)
 
+var main_scatter_ghost_list = []
+var second_scatter_ghost_list = []
+
+for (let i = 0; i < 4; i++){
+    let main_ghost = new GIF(0, 0, ["Images/35.png", "Images/36.png"], 1)
+    main_ghost.scatter_node = ghost_list[i].scatter_node
+    main_scatter_ghost_list.push(main_ghost)
+
+    let second_ghost = new GIF(0, 0, ["Images/35.png", "Images/36.png", "Images/37.png", "Images/38.png"], 1)
+    second_ghost.scatter_node = ghost_list[i].scatter_node
+    second_scatter_ghost_list.push(second_ghost)
+}
+
+
+
+
+

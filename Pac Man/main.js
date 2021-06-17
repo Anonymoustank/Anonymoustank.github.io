@@ -172,7 +172,7 @@ function pathfind_bfs(node, target, list, already_visited, modified_path){
 node_list = []
 already_visited = new Set()
 
-function move_ghost(ghost, target){
+function move_ghost(ghost, target, path_algorithm){
     if (ghost.x != target.x || ghost.y != target.y){
         eval("var target_node = node" + target.x + target.y)
         eval("var ghost_node = node" + ghost.x + ghost.y)
@@ -191,16 +191,16 @@ function move_ghost(ghost, target){
                 }
                 already_visited.add(ghost_node) //can't double back to go to ghost's current position
                 let path = []
-                if (ghost == red_ghost){
+                if (path_algorithm == 0){
                     path = pathfind_dfs(node, target_node, node_list, already_visited, false)
                 }
-                else if (ghost == orange_ghost){
+                else if (path_algorithm == 1){
                     path = pathfind_dfs(node, target_node, node_list, already_visited, true)
                 }
-                else if (ghost == cyan_ghost){
+                else if (path_algorithm == 2){
                     path = pathfind_bfs(node, target_node, node_list, already_visited, false)
                 }
-                else if (ghost == pink_ghost){
+                else {
                     path = pathfind_bfs(node, target_node, node_list, already_visited, true)
                 }
                 if (shortest_path.length == 0 || (shortest_path.length > path.length && path.length != 0)){
@@ -210,7 +210,7 @@ function move_ghost(ghost, target){
         }
         if (shortest_path.length == 0){
             ghost.previous_node = null
-            move_ghost(ghost, target)
+            move_ghost(ghost, target, path_algorithm)
         }
         else {
             for (let node of shortest_path){
@@ -222,6 +222,35 @@ function move_ghost(ghost, target){
             }
             if (ghost.previous_node != ghost_node){
                 ghost.previous_node = ghost_node 
+            }
+        }
+    }
+}
+
+function orient_ghost(ghost_list){
+    for (let i = 0; i < 4; i++){
+        if (ghost_list[i].previous_node == null || ghost_list[i].previous_node.y - ghost_list[i].y > 0){
+            ghost_list[i].degrees = 0
+        }
+        else if (ghost_list[i].previous_node.x - ghost_list[i].x < 0){
+            ghost_list[i].degrees = 90
+        }
+        else if (ghost_list[i].previous_node.x - ghost_list[i].x > 0){
+            ghost_list[i].degrees = 270
+        }
+        else if (ghost_list[i].previous_node.y - ghost_list[i].y < 0){
+            ghost_list[i].degrees = 180
+        }
+        ghost_list[i].draw()
+        if (player.x == ghost_list[i].x && player.y == ghost_list[i].y && !scatter_mode){
+            // console.log("Game Over")
+        }
+        else {
+            if (!scatter_mode){
+                move_ghost(ghost_list[i], player, i)
+            }
+            else {
+                move_ghost(ghost_list[i], ghost_list[i].scatter_node, i)
             }
         }
     }
@@ -283,30 +312,21 @@ function draw(){
                 
             }
 
-            console.log(coins)
-            console.log(player.x, player.y)
-
             eval("var player_node = node" + player.x + player.y)
             if (coins.has(player_node)){
-                if (player_node.x == 300 && player_node.y == 100){
-                    console.log("hello")
-                }
                 coins.delete(player_node)
 
                 if (large_nodes.has(player_node)){
                     large_nodes.delete(player_node)
                     scatter_mode = true
                     scatter_cooldown = new Date()
+                    for (let i = 0; i < 4; i++){
+                        main_scatter_ghost_list[i].x = ghost_list[i].x
+                        main_scatter_ghost_list[i].y = ghost_list[i].y
+                        main_scatter_ghost_list[i].previous_node = ghost_list[i].previous_node
+                        main_scatter_ghost_list[i].degrees = ghost_list[i].degrees
+                    }
                 }
-            }
-            if (scatter_mode && new Date() - scatter_cooldown >= 4000) {
-                scatter_mode = false
-            }
-            else if (scatter_mode) {
-                ctx.textAlign = "center"
-                ctx.font = "20px Georgia";
-                let time_left = 4 - Math.round((new Date() - scatter_cooldown)/1000)
-                ctx.fillText("Scatter Mode Ends: " + time_left, canvas.width/2, starting_y_position - 50)
             }
 
             ctx.fillStyle = "#0000FF"
@@ -320,33 +340,41 @@ function draw(){
                     ctx.fillStyle = "#0000FF"
                 }
             }
-            
-            for (let ghost of ghost_list){
-                if (ghost.previous_node == null || ghost.previous_node.y - ghost.y > 0){
-                    ghost.degrees = 0
-                }
-                else if (ghost.previous_node.x - ghost.x < 0){
-                    ghost.degrees = 90
-                }
-                else if (ghost.previous_node.x - ghost.x > 0){
-                    ghost.degrees = 270
-                }
-                else if (ghost.previous_node.y - ghost.y < 0){
-                    ghost.degrees = 180
-                }
-                ghost.draw()
-                if (player.x == ghost.x && player.y == ghost.y){
-                    // console.log("Game Over")
+
+            if (scatter_mode){
+                if (new Date() - scatter_cooldown >= 4000) {
+                    scatter_mode = false
+                    for (let i = 0; i < 4; i++){
+                        ghost_list[i].x = second_scatter_ghost_list[i].x 
+                        ghost_list[i].y = second_scatter_ghost_list[i].y
+                        ghost_list[i].previous_node = second_scatter_ghost_list[i].previous_node
+                        ghost_list[i].degrees = second_scatter_ghost_list[i].degrees
+                    }
                 }
                 else {
-                    if (!scatter_mode){
-                        move_ghost(ghost, player)
+                    ctx.textAlign = "center"
+                    ctx.font = "20px Georgia";
+                    let time_left = 4 - Math.round((new Date() - scatter_cooldown)/1000)
+                    ctx.fillText("Scatter Mode Ends: " + time_left, canvas.width/2, starting_y_position - 50)
+                    if (new Date() - scatter_cooldown < 1500){
+                        orient_ghost(main_scatter_ghost_list)
+                        for (let i = 0; i < 4; i++){
+                            second_scatter_ghost_list[i].x = main_scatter_ghost_list[i].x
+                            second_scatter_ghost_list[i].y = main_scatter_ghost_list[i].y
+                            second_scatter_ghost_list[i].previous_node = main_scatter_ghost_list[i].previous_node
+                            second_scatter_ghost_list[i].degrees = main_scatter_ghost_list[i].degrees
+                        }
                     }
                     else {
-                        move_ghost(ghost, ghost.scatter_node)
+                        console.log("hi")
+                        orient_ghost(second_scatter_ghost_list)
                     }
                 }
             }
+            else {
+                orient_ghost(ghost_list)
+            }
+            
             
             if (!hasStarted){
                 pac_man_circle.draw()
