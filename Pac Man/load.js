@@ -379,7 +379,7 @@ for (let i = 0; i < 4; i++){
     second_scatter_ghost_list.push(second_ghost)
 }
 
-
-
+eval('var cherry_node = node' + (((Math.floor(Math.random() * ((starting_position + 820)/5 - (starting_position + 100)/5 + 1)) + (starting_position + 100)/5)) * 5) + (starting_y_position + 550))
+var cherry = new GameObject(cherry_node.x, cherry_node.y, "Images/cherry.png")
 
 

@@ -7,6 +7,7 @@ var keyBeingPressed = false
 var hasStarted = false
 document.addEventListener("keydown", keyDownHandler, false);
 var speed = 5;
+var lives = 0;
 var cooldown = performance.now()
 var start_timer = performance.now()
 var first_loop = true
@@ -14,6 +15,8 @@ var scatter_mode = false
 var scatter_cooldown = new Date()
 var start_audio = new Audio('Audio/pacman_beginning.wav')
 var waka = new Audio('Audio/waka.wav')
+var eat_fruit = new Audio('Audio/fruit.wav')
+eat_fruit.volume = 0.25
 waka.volume = 0.25
 start_audio.volume = 0.25
 
@@ -315,8 +318,17 @@ function draw(){
                 }
                 
             }
-
             eval("var player_node = node" + player.x + player.y)
+
+            if (player_node == cherry_node && lives == 0) {
+                lives += 1
+                eat_fruit.play()
+            }
+            else if (lives == 0) {
+                cherry.draw()
+            }
+
+            
             if (coins.has(player_node)){
                 coins.delete(player_node)
 
@@ -370,7 +382,6 @@ function draw(){
                         }
                     }
                     else {
-                        console.log("hi")
                         orient_ghost(second_scatter_ghost_list)
                     }
                 }
