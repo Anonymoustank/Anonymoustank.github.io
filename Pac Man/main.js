@@ -219,25 +219,21 @@ function move_ghost(ghost, target, path_algorithm){
                 }
             }
         }
-        if (shortest_path.length == 0){
-            ghost.previous_node = null
-            move_ghost(ghost, target, path_algorithm)
+        
+        for (let node of shortest_path){
+            if (node != ghost.previous_node && node != ghost_node){
+                ghost.x = node.x
+                ghost.y = node.y
+                break
+            }
         }
-        else {
-            for (let node of shortest_path){
-                if (node != ghost.previous_node && node != ghost_node){
-                    ghost.x = node.x
-                    ghost.y = node.y
-                    break
-                }
-            }
-            if (ghost.previous_node != ghost_node){
-                ghost.previous_node = ghost_node 
-            }
+        if (ghost.previous_node != ghost_node){
+            ghost.previous_node = ghost_node 
+        }
             
-        }
     }
-    else if (scatter_mode) {
+    
+    if (scatter_mode) {
         let random_new_scatter_node = [...scatter_node_list]
         random_new_scatter_node.splice(scatter_node_list.indexOf(ghost.scatter_node), 1)
         ghost.scatter_node = random_new_scatter_node[[Math.floor(Math.random()*random_new_scatter_node.length)]]
@@ -364,21 +360,33 @@ function draw(){
             else if (!fruit_eaten) {
                 cherry.draw()
             }
-
             
             if (coins.has(player_node)){
                 coins.delete(player_node)
                 if (large_nodes.has(player_node)){
                     large_nodes.delete(player_node)
-                    scatter_mode = true
-                    scatter_cooldown = new Date()
-                    for (let i = 0; i < 4; i++){
-                        main_scatter_ghost_list[i].x = ghost_list[i].x
-                        main_scatter_ghost_list[i].y = ghost_list[i].y
-                        main_scatter_ghost_list[i].previous_node = player_node
-                        main_scatter_ghost_list[i].degrees = ghost_list[i].degrees
-                        main_scatter_ghost_list[i].scatter_node = scatter_node_list[i]
+                    if (scatter_mode){
+                        if (scatter_cooldown - new Date() < 1500){
+                            for (let i = 0; i < 4; i++){
+                                main_scatter_ghost_list[i].x = second_scatter_ghost_list[i].x
+                                main_scatter_ghost_list[i].y = second_scatter_ghost_list[i].y
+                                main_scatter_ghost_list[i].previous_node = player_node
+                                main_scatter_ghost_list[i].degrees = second_scatter_ghost_list[i].degrees
+                                main_scatter_ghost_list[i].scatter_node = scatter_node_list[i]
+                            }
+                        }
                     }
+                    else {
+                        scatter_mode = true
+                        for (let i = 0; i < 4; i++){
+                            main_scatter_ghost_list[i].x = ghost_list[i].x
+                            main_scatter_ghost_list[i].y = ghost_list[i].y
+                            main_scatter_ghost_list[i].previous_node = player_node
+                            main_scatter_ghost_list[i].degrees = ghost_list[i].degrees
+                            main_scatter_ghost_list[i].scatter_node = scatter_node_list[i]
+                        }
+                    }
+                    scatter_cooldown = new Date()
                 }
             }
 
