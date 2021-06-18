@@ -234,7 +234,13 @@ function move_ghost(ghost, target, path_algorithm){
             if (ghost.previous_node != ghost_node){
                 ghost.previous_node = ghost_node 
             }
+            
         }
+    }
+    else if (scatter_mode) {
+        let random_new_scatter_node = [...scatter_node_list]
+        random_new_scatter_node.splice(scatter_node_list.indexOf(ghost.scatter_node), 1)
+        ghost.scatter_node = random_new_scatter_node[[Math.floor(Math.random()*random_new_scatter_node.length)]]
     }
 }
 
@@ -369,8 +375,9 @@ function draw(){
                     for (let i = 0; i < 4; i++){
                         main_scatter_ghost_list[i].x = ghost_list[i].x
                         main_scatter_ghost_list[i].y = ghost_list[i].y
-                        main_scatter_ghost_list[i].previous_node = ghost_list[i].previous_node
+                        main_scatter_ghost_list[i].previous_node = player_node
                         main_scatter_ghost_list[i].degrees = ghost_list[i].degrees
+                        main_scatter_ghost_list[i].scatter_node = scatter_node_list[i]
                     }
                 }
             }
@@ -409,6 +416,7 @@ function draw(){
                             second_scatter_ghost_list[i].y = main_scatter_ghost_list[i].y
                             second_scatter_ghost_list[i].previous_node = main_scatter_ghost_list[i].previous_node
                             second_scatter_ghost_list[i].degrees = main_scatter_ghost_list[i].degrees
+                            second_scatter_ghost_list[i].scatter_node = main_scatter_ghost_list[i].scatter_node
                         }
                     }
                     else {
