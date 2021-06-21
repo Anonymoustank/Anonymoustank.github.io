@@ -224,6 +224,8 @@ for (let i = starting_position; i <= starting_position + 900; i = i + 5){ //map 
     }
 }
 
+
+
 var width = 10
 var displacement = 22.5
 var thickness = displacement + width
@@ -309,6 +311,21 @@ walls.push(new wall(starting_position + 725 - thickness, starting_y_position + 2
 walls.push(new wall(starting_position + 565 - thickness, starting_y_position + 200 + displacement, 160 + width, width))
 walls.push(new wall(starting_position + 565 - thickness, starting_y_position + 100 + displacement, width, 100))
 
+var coins = new Set(nodes)
+var large_nodes = new Set([node300250, node850500, node620370, node1200300])
+var scatter_node_list = [node1200100, node1200650, node300650, node300100]
+
+var forbidden_nodes = new Set()
+for (let i = 0; i < 4; i++){
+    let x = starting_position + 430 + i*20
+    for (let j = 1; j < 101; j++) {
+        let y = starting_y_position + 100 + j
+        eval('var node' + x + y + '= new node(' + x + "," + y + ')')
+        eval('forbidden_nodes.add(node' + x + y + ')')
+        eval('nodes.add(node' + x + y + ')')
+    }
+}
+
 for (let node of nodes){
     try {
         eval('var test_node1 = node' + (node.x + 5) + node.y)
@@ -340,11 +357,8 @@ for (let node of nodes){
     catch (e){}
 }
 
-var coins = new Set(nodes)
-var large_nodes = new Set([node300250, node850500, node620370, node1200300])
-var scatter_node_list = [node1200100, node1200650, node300650, node300100]
 
-var red_ghost = new GIF(starting_position + 500, starting_y_position + 100, [["Images/1.png", "Images/2.png"], ["Images/3.png", "Images/4.png"], ["Images/5.png", "Images/6.png"], ["Images/7.png", "Images/8.png"]], 4)
+var red_ghost = new GIF(starting_position + 490, starting_y_position + 200, [["Images/1.png", "Images/2.png"], ["Images/3.png", "Images/4.png"], ["Images/5.png", "Images/6.png"], ["Images/7.png", "Images/8.png"]], 4)
 red_ghost.previous_node = null
 ghost_list.push(red_ghost)
 
@@ -352,15 +366,15 @@ var player = new GIF(starting_position, starting_y_position, [["Images/PlayerUP 
 var pac_man_circle = new GameObject(player.x, player.y, "Images/Circle.png")
 player.lives = 3
 
-var cyan_ghost = new GIF(starting_position + 450, starting_y_position + 100, [["Images/9.png", "Images/10.png"], ["Images/11.png", "Images/12.png"], ["Images/13.png", "Images/14.png"], ["Images/15.png", "Images/16.png"]], 4)
+var cyan_ghost = new GIF(starting_position + 450, starting_y_position + 200, [["Images/9.png", "Images/10.png"], ["Images/11.png", "Images/12.png"], ["Images/13.png", "Images/14.png"], ["Images/15.png", "Images/16.png"]], 4)
 cyan_ghost.previous_node = null
 ghost_list.push(cyan_ghost)
 
-var orange_ghost = new GIF(starting_position + 470, starting_y_position + 100, [["Images/23.png", "Images/24.png"], ["Images/19.png", "Images/20.png"], ["Images/31.png", "Images/32.png"], ["Images/21.png", "Images/22.png"]], 4)
+var orange_ghost = new GIF(starting_position + 470, starting_y_position + 200, [["Images/23.png", "Images/24.png"], ["Images/19.png", "Images/20.png"], ["Images/31.png", "Images/32.png"], ["Images/21.png", "Images/22.png"]], 4)
 orange_ghost.previous_node = null
 ghost_list.push(orange_ghost)
 
-var pink_ghost = new GIF(starting_position + 430, starting_y_position + 100, [["Images/25.png", "Images/26.png"], ["Images/29.png", "Images/30.png"], ["Images/33.png", "Images/34.png"], ["Images/27.png", "Images/28.png"]], 4)
+var pink_ghost = new GIF(starting_position + 430, starting_y_position + 200, [["Images/25.png", "Images/26.png"], ["Images/29.png", "Images/30.png"], ["Images/33.png", "Images/34.png"], ["Images/27.png", "Images/28.png"]], 4)
 pink_ghost.previous_node = null
 ghost_list.push(pink_ghost)
 

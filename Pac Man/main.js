@@ -50,34 +50,38 @@ function keyDownHandler(e) {
 function player_move(){
     try {
         if (keyBeingPressed == "right"){
+            eval("var potential_node = node" + (player.x + speed) + player.y)
             eval("var can_move = nodes.has(node" + (player.x + speed) + player.y + ")")
-            if (can_move){
+            if (can_move && !forbidden_nodes.has(potential_node)){
                 player.x += speed
                 player.degrees = 90
             }
         }
         else if (keyBeingPressed == "left"){
+            eval("var potential_node = node" + (player.x - speed) + player.y)
             eval("var can_move = nodes.has(node" + (player.x - speed) + player.y + ")")
-            if (can_move){
+            if (can_move && !forbidden_nodes.has(potential_node)){
                 player.x -= speed
                 player.degrees = 270
             }
         }
         else if (keyBeingPressed == "down"){
+            eval("var potential_node = node" + player.x + (player.y + speed))
             eval("var can_move = nodes.has(node" + player.x + (player.y + speed) + ")")
-            if (can_move){
+            if (can_move && !forbidden_nodes.has(potential_node)){
                 player.y += speed
                 player.degrees = 180
             } 
         }
         else if (keyBeingPressed == "up"){
+            eval("var potential_node = node" + player.x + (player.y - speed))
             eval("var can_move = nodes.has(node" + player.x + (player.y - speed) + ")")
-            if (can_move){
+            if (can_move && !forbidden_nodes.has(potential_node)){
                 player.y -= speed
                 player.degrees = 0
             }
         }
-        if (can_move){
+        if (can_move && !forbidden_nodes.has(potential_node)){
             hasStarted = true
         }
     }
@@ -242,46 +246,48 @@ function move_ghost(ghost, target, path_algorithm){
 
 function orient_ghost(ghost_list){
     for (let i = 0; i < 4; i++){
-        if (ghost_list[i].previous_node == null || ghost_list[i].previous_node.y - ghost_list[i].y > 0){
-            ghost_list[i].degrees = 0
-        }
-        else if (ghost_list[i].previous_node.x - ghost_list[i].x < 0){
-            ghost_list[i].degrees = 90
-        }
-        else if (ghost_list[i].previous_node.x - ghost_list[i].x > 0){
-            ghost_list[i].degrees = 270
-        }
-        else if (ghost_list[i].previous_node.y - ghost_list[i].y < 0){
-            ghost_list[i].degrees = 180
-        }
-        ghost_list[i].draw()
-        if (!scatter_mode){
-            move_ghost(ghost_list[i], player, i)
-        }
-        else {
-            move_ghost(ghost_list[i], ghost_list[i].scatter_node, i)
-        }
-        if (player.x == ghost_list[i].x && player.y == ghost_list[i].y && !scatter_mode){
-            waka.pause()
-            waka.currentTime = 0
-            death.play()
-            if (lives > 0){
-                start_timer = performance.now() - 2000
-                for (let ghost of ghost_list){
-                    ghost.x = ghost.original_location_x
-                    ghost.y = ghost.original_location_y
-                }
-                player.x = player.original_location_x
-                player.y = player.original_location_y
-                player.degrees = 270
-                keyBeingPressed = "left"
-                hasStarted = false
-                lives -= 1
+        if (performance.now() - ghost_list[i].cooldown >= 0){
+            if (ghost_list[i].previous_node == null || ghost_list[i].previous_node.y - ghost_list[i].y > 0){
+                ghost_list[i].degrees = 0
+            }
+            else if (ghost_list[i].previous_node.x - ghost_list[i].x < 0){
+                ghost_list[i].degrees = 90
+            }
+            else if (ghost_list[i].previous_node.x - ghost_list[i].x > 0){
+                ghost_list[i].degrees = 270
+            }
+            else if (ghost_list[i].previous_node.y - ghost_list[i].y < 0){
+                ghost_list[i].degrees = 180
+            }
+            if (!scatter_mode){
+                move_ghost(ghost_list[i], player, i)
             }
             else {
-                dead = true
+                move_ghost(ghost_list[i], ghost_list[i].scatter_node, i)
+            }
+            if (player.x == ghost_list[i].x && player.y == ghost_list[i].y && !scatter_mode){
+                waka.pause()
+                waka.currentTime = 0
+                death.play()
+                if (lives > 0){
+                    start_timer = performance.now() - 2000
+                    for (let ghost of ghost_list){
+                        ghost.x = ghost.original_location_x
+                        ghost.y = ghost.original_location_y
+                    }
+                    player.x = player.original_location_x
+                    player.y = player.original_location_y
+                    player.degrees = 270
+                    keyBeingPressed = "left"
+                    hasStarted = false
+                    lives -= 1
+                }
+                else {
+                    dead = true
+                }
             }
         }
+        ghost_list[i].draw()
     }
 }
 
@@ -307,6 +313,9 @@ function draw(){
         }
         else if (performance.now() - start_timer <= Math.floor((start_audio.duration * 1000))){
             ctx.fillText("1", canvas.width/2, canvas.height/2)
+            for (let i = 0; i < 4; i++){
+                ghost_list[i].cooldown = performance.now() + i * 1000
+            }
         }
         else if (!dead && !won) {
             ctx.beginPath()
@@ -373,6 +382,7 @@ function draw(){
                                 main_scatter_ghost_list[i].previous_node = player_node
                                 main_scatter_ghost_list[i].degrees = second_scatter_ghost_list[i].degrees
                                 main_scatter_ghost_list[i].scatter_node = scatter_node_list[i]
+                                main_scatter_ghost_list[i].cooldown = second_scatter_ghost_list[i].cooldown
                             }
                         }
                     }
@@ -384,6 +394,7 @@ function draw(){
                             main_scatter_ghost_list[i].previous_node = player_node
                             main_scatter_ghost_list[i].degrees = ghost_list[i].degrees
                             main_scatter_ghost_list[i].scatter_node = scatter_node_list[i]
+                            main_scatter_ghost_list[i].cooldown = ghost_list[i].cooldown
                         }
                     }
                     scatter_cooldown = new Date()
@@ -410,6 +421,7 @@ function draw(){
                         ghost_list[i].y = second_scatter_ghost_list[i].y
                         ghost_list[i].previous_node = second_scatter_ghost_list[i].previous_node
                         ghost_list[i].degrees = second_scatter_ghost_list[i].degrees
+                        ghost_list[i].cooldown = second_scatter_ghost_list[i].cooldown
                     }
                 }
                 else {
@@ -425,6 +437,7 @@ function draw(){
                             second_scatter_ghost_list[i].previous_node = main_scatter_ghost_list[i].previous_node
                             second_scatter_ghost_list[i].degrees = main_scatter_ghost_list[i].degrees
                             second_scatter_ghost_list[i].scatter_node = main_scatter_ghost_list[i].scatter_node
+                            second_scatter_ghost_list[i].cooldown = main_scatter_ghost_list[i].cooldown
                         }
                     }
                     else {
