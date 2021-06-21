@@ -314,7 +314,7 @@ function draw(){
         else if (performance.now() - start_timer <= Math.floor((start_audio.duration * 1000))){
             ctx.fillText("1", canvas.width/2, canvas.height/2)
             for (let i = 0; i < 4; i++){
-                ghost_list[i].cooldown = performance.now() + i * 1000
+                ghost_list[i].cooldown = performance.now() + i * 3000
             }
         }
         else if (!dead && !won) {
