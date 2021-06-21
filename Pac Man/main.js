@@ -84,6 +84,9 @@ function player_move(){
         if (can_move && !forbidden_nodes.has(potential_node)){
             hasStarted = true
         }
+        if (forbidden_nodes.has(potential_node)) {
+            throw '';
+        }
     }
     catch (error) {
         if (player.degrees == 90){
@@ -291,6 +294,18 @@ function orient_ghost(ghost_list){
     }
 }
 
+function switch_costume(first_ghost_list, second_ghost_list){
+    eval("var player_node = node" + player.x + player.y)
+    for (let i = 0; i < 4; i++){
+        first_ghost_list[i].x = second_ghost_list[i].x
+        first_ghost_list[i].y = second_ghost_list[i].y
+        first_ghost_list[i].previous_node = player_node
+        first_ghost_list[i].degrees = second_ghost_list[i].degrees
+        first_ghost_list[i].scatter_node = second_ghost_list[i].scatter_node
+        first_ghost_list[i].cooldown = second_ghost_list[i].cooldown
+    }
+}
+
 function draw(){
     if (!running){
         ctx.fillStyle = "#eee"
@@ -376,26 +391,12 @@ function draw(){
                     large_nodes.delete(player_node)
                     if (scatter_mode){
                         if (scatter_cooldown - new Date() < 1500){
-                            for (let i = 0; i < 4; i++){
-                                main_scatter_ghost_list[i].x = second_scatter_ghost_list[i].x
-                                main_scatter_ghost_list[i].y = second_scatter_ghost_list[i].y
-                                main_scatter_ghost_list[i].previous_node = player_node
-                                main_scatter_ghost_list[i].degrees = second_scatter_ghost_list[i].degrees
-                                main_scatter_ghost_list[i].scatter_node = scatter_node_list[i]
-                                main_scatter_ghost_list[i].cooldown = second_scatter_ghost_list[i].cooldown
-                            }
+                            switch_costume(main_scatter_ghost_list, second_scatter_ghost_list)
                         }
                     }
                     else {
                         scatter_mode = true
-                        for (let i = 0; i < 4; i++){
-                            main_scatter_ghost_list[i].x = ghost_list[i].x
-                            main_scatter_ghost_list[i].y = ghost_list[i].y
-                            main_scatter_ghost_list[i].previous_node = player_node
-                            main_scatter_ghost_list[i].degrees = ghost_list[i].degrees
-                            main_scatter_ghost_list[i].scatter_node = scatter_node_list[i]
-                            main_scatter_ghost_list[i].cooldown = ghost_list[i].cooldown
-                        }
+                        switch_costume(main_scatter_ghost_list, ghost_list)
                     }
                     scatter_cooldown = new Date()
                 }
@@ -416,13 +417,7 @@ function draw(){
             if (scatter_mode){
                 if (new Date() - scatter_cooldown >= 4000) {
                     scatter_mode = false
-                    for (let i = 0; i < 4; i++){
-                        ghost_list[i].x = second_scatter_ghost_list[i].x 
-                        ghost_list[i].y = second_scatter_ghost_list[i].y
-                        ghost_list[i].previous_node = second_scatter_ghost_list[i].previous_node
-                        ghost_list[i].degrees = second_scatter_ghost_list[i].degrees
-                        ghost_list[i].cooldown = second_scatter_ghost_list[i].cooldown
-                    }
+                    switch_costume(ghost_list, second_scatter_ghost_list)
                 }
                 else {
                     ctx.textAlign = "center"
@@ -431,14 +426,7 @@ function draw(){
                     ctx.fillText("Scatter Mode Ends: " + time_left, canvas.width/2, starting_y_position - 50)
                     if (new Date() - scatter_cooldown < 1500){
                         orient_ghost(main_scatter_ghost_list)
-                        for (let i = 0; i < 4; i++){
-                            second_scatter_ghost_list[i].x = main_scatter_ghost_list[i].x
-                            second_scatter_ghost_list[i].y = main_scatter_ghost_list[i].y
-                            second_scatter_ghost_list[i].previous_node = main_scatter_ghost_list[i].previous_node
-                            second_scatter_ghost_list[i].degrees = main_scatter_ghost_list[i].degrees
-                            second_scatter_ghost_list[i].scatter_node = main_scatter_ghost_list[i].scatter_node
-                            second_scatter_ghost_list[i].cooldown = main_scatter_ghost_list[i].cooldown
-                        }
+                        switch_costume(second_scatter_ghost_list, main_scatter_ghost_list)
                     }
                     else {
                         orient_ghost(second_scatter_ghost_list)

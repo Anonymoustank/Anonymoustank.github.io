@@ -387,6 +387,8 @@ for (let i = 0; i < 4; i++){
 
     let second_ghost = new GIF(0, 0, ["Images/35.png", "Images/36.png", "Images/37.png", "Images/38.png"], 1)
     second_scatter_ghost_list.push(second_ghost)
+
+    ghost_list[i].scatter_node = scatter_node_list[i]
 }
 
 eval('var cherry_node = node' + (((Math.floor(Math.random() * ((starting_position + 820)/5 - (starting_position + 100)/5 + 1)) + (starting_position + 100)/5)) * 5) + (starting_y_position + 550))
