@@ -20,6 +20,9 @@ var waka = new Audio('Audio/waka.wav')
 var eat_fruit = new Audio('Audio/fruit.wav')
 var death = new Audio('Audio/death.wav')
 var victory = new Audio('Audio/Victory.m4a')
+var eat_ghost = new Audio('Audio/eat_ghost.wav')
+var ghost_type_list = [ghost_list, main_scatter_ghost_list, second_scatter_ghost_list]
+eat_ghost.volume = 0.25
 victory.volume = 0.25
 death.volume = 0.25
 eat_fruit.volume = 0.25
@@ -239,8 +242,21 @@ function move_ghost(ghost, target, path_algorithm){
         }
             
     }
-    
-    if (scatter_mode) {
+    else if (ghost.x == ghost.original_location_x && ghost.y == ghost.original_location_y && eaten_ghost_list.includes(ghost)) {
+        eval("var player_node = node" + player.x + player.y)
+        let i = eaten_ghost_list.indexOf(ghost)
+        for (let first_ghost_list of ghost_type_list) {
+            first_ghost_list[i].x = ghost.x
+            first_ghost_list[i].y = ghost.y
+            first_ghost_list[i].previous_node = player_node
+            first_ghost_list[i].degrees = ghost.degrees
+            first_ghost_list[i].scatter_node = ghost.scatter_node
+            first_ghost_list[i].cooldown = performance.now() + 4000
+            first_ghost_list[i].eaten = false
+        }
+        
+    }
+    else {
         let random_new_scatter_node = [...scatter_node_list]
         random_new_scatter_node.splice(scatter_node_list.indexOf(ghost.scatter_node), 1)
         ghost.scatter_node = random_new_scatter_node[[Math.floor(Math.random()*random_new_scatter_node.length)]]
@@ -249,26 +265,8 @@ function move_ghost(ghost, target, path_algorithm){
 
 function orient_ghost(ghost_list){
     for (let i = 0; i < 4; i++){
-        if (performance.now() - ghost_list[i].cooldown >= 0){
-            if (ghost_list[i].previous_node == null || ghost_list[i].previous_node.y - ghost_list[i].y > 0){
-                ghost_list[i].degrees = 0
-            }
-            else if (ghost_list[i].previous_node.x - ghost_list[i].x < 0){
-                ghost_list[i].degrees = 90
-            }
-            else if (ghost_list[i].previous_node.x - ghost_list[i].x > 0){
-                ghost_list[i].degrees = 270
-            }
-            else if (ghost_list[i].previous_node.y - ghost_list[i].y < 0){
-                ghost_list[i].degrees = 180
-            }
-            if (!scatter_mode){
-                move_ghost(ghost_list[i], player, i)
-            }
-            else {
-                move_ghost(ghost_list[i], ghost_list[i].scatter_node, i)
-            }
-            if (player.x == ghost_list[i].x && player.y == ghost_list[i].y && !scatter_mode){
+        if (Math.abs(player.x - ghost_list[i].x) <= 6 && Math.abs(player.y - ghost_list[i].y) <= 6){
+            if (!scatter_mode && !ghost_list[i].eaten){
                 waka.pause()
                 waka.currentTime = 0
                 death.play()
@@ -277,6 +275,7 @@ function orient_ghost(ghost_list){
                     for (let ghost of ghost_list){
                         ghost.x = ghost.original_location_x
                         ghost.y = ghost.original_location_y
+                        ghost.eaten = false
                     }
                     player.x = player.original_location_x
                     player.y = player.original_location_y
@@ -289,8 +288,46 @@ function orient_ghost(ghost_list){
                     dead = true
                 }
             }
+            else if (!ghost_list[i].eaten) {
+                for (let this_ghost_list of ghost_type_list) {
+                    this_ghost_list[i].eaten = true
+                }
+                eat_ghost.play()
+                switch_costume(eaten_ghost_list, ghost_list)
+            }
         }
-        ghost_list[i].draw()
+        let ghost = ghost_list[i]
+        if (ghost_list[i].eaten){
+            ghost = eaten_ghost_list[i]
+        }
+        if (performance.now() - ghost.cooldown >= 0){
+            if (ghost.previous_node == null || ghost.previous_node.y - ghost.y > 0){
+                ghost.degrees = 0
+            }
+            else if (ghost.previous_node.x - ghost.x < 0){
+                ghost.degrees = 90
+            }
+            else if (ghost.previous_node.x - ghost.x > 0){
+                ghost.degrees = 270
+            }
+            else if (ghost.previous_node.y - ghost.y < 0){
+                ghost.degrees = 180
+            }
+            if (!scatter_mode && !ghost.eaten){
+                move_ghost(ghost, player, i)
+            }
+            else {
+                if (!ghost.eaten) {
+                    move_ghost(ghost, ghost.scatter_node, i)
+                }
+                else {
+                    eval("var original_node = node" + eaten_ghost_list[i].original_location_x + eaten_ghost_list[i].original_location_y)
+                    move_ghost(eaten_ghost_list[i], original_node, i)
+                }
+                
+            }
+        }
+        ghost.draw()
     }
 }
 
@@ -303,6 +340,7 @@ function switch_costume(first_ghost_list, second_ghost_list){
         first_ghost_list[i].degrees = second_ghost_list[i].degrees
         first_ghost_list[i].scatter_node = second_ghost_list[i].scatter_node
         first_ghost_list[i].cooldown = second_ghost_list[i].cooldown
+        first_ghost_list[i].eaten = second_ghost_list[i].eaten
     }
 }
 

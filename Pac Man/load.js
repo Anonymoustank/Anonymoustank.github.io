@@ -380,15 +380,23 @@ ghost_list.push(pink_ghost)
 
 var main_scatter_ghost_list = []
 var second_scatter_ghost_list = []
+var eaten_ghost_list = []
 
 for (let i = 0; i < 4; i++){
     let main_ghost = new GIF(0, 0, ["Images/35.png", "Images/36.png"], 1)
+    main_ghost.eaten = false
     main_scatter_ghost_list.push(main_ghost)
 
     let second_ghost = new GIF(0, 0, ["Images/35.png", "Images/36.png", "Images/37.png", "Images/38.png"], 1)
+    second_ghost.eaten = false
     second_scatter_ghost_list.push(second_ghost)
 
     ghost_list[i].scatter_node = scatter_node_list[i]
+    ghost_list[i].eaten = false
+
+    let eaten_ghost = new GIF(ghost_list[i].x, ghost_list[i].y, [["Images/up_eye.png", "Images/up_eye.png"], ["Images/right_eye.png", "Images/right_eye.png"], ["Images/left_eye.png", "Images/left_eye.png"], ["Images/down_eye.png", "Images/down_eye.png"]], 4)
+    eaten_ghost.eaten = true
+    eaten_ghost_list.push(eaten_ghost)
 }
 
 eval('var cherry_node = node' + (((Math.floor(Math.random() * ((starting_position + 820)/5 - (starting_position + 100)/5 + 1)) + (starting_position + 100)/5)) * 5) + (starting_y_position + 550))
